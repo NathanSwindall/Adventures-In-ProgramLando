@@ -7,7 +7,7 @@
 #
 # For technical reasons, this file is *NOT* reloaded automatically when you use
 # 'bundle exec jekyll serve'. If you change this file, please restart the server process.
-#
+# channel/UCwavd9Y-XCVZyVeslmoxFHw
 # If you need help with YAML syntax, here are some quick references for you: 
 # https://learn-the-web.algonquindesign.ca/topics/markdown-yaml-cheat-sheet/#yaml
 # https://learnxinyminutes.com/docs/yaml/
@@ -26,10 +26,12 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: 
 github_username:  NathanSwindall
-youtube_username: Swin Deasy
+youtube_username: 
 
 # Build settings
-theme: minima
+
+# Turned into regular them
+# theme: minima
 plugins:
   - jekyll-feed
 
