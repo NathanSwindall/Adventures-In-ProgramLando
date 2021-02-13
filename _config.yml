@@ -22,8 +22,8 @@ title: Adventures in ProgramLando
 email: Nathan.Swindall20102@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   A blog about my adventures and exploration of the programming landscape... and some other side adventures too!
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "Adventures-In-ProgramLando" # the subpath of your site, e.g. /blog
+url: "https://nathanswindall.github.io/" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: 
 github_username:  NathanSwindall
  
