@@ -6,7 +6,7 @@ categories: jekyll update
 image: /assets/images/1.jpg
 ---
 
-![]({{page.image}})
+![]({{ page.image  | relative_url }})
 # Future Posts 
 
 1. TOC
