@@ -1,3 +1,12 @@
+---
+layout: post 
+title: "Future Posts"
+date: 2021-02-14
+categories: jekyll update 
+image: /assets/images/1.jpg
+---
+
+![]({{page.image}})
 # Future Posts 
 
 1. TOC
