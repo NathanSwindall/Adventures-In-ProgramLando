@@ -11,7 +11,20 @@ layout: default
     {{ content }}
   </div>
 
+  <h2>Featured post</h2>
   {%- assign categoryType = page.category -%}
+  {%- assign displayOffset = 0 -%}
+  {%- assign displayLimit = 1 -%}
+  {%- assign sectionName = "featured-post" -%}
+  {% if categoryType == "tech" or categoryType == "general" %}
+      {% include feed.html %}
+  {% endif %}
+
+  <h2>Posts</h2>
+  {%- assign displayOffset = 1 -%}
+  {%- assign displayLimit = null -%}
+  {%- assign categoryType = page.category -%}
+  {%- assign sectionName = "feed" -%}
   {% if categoryType == "tech" or categoryType == "general" %}
       {% include feed.html %}
   {% endif %}

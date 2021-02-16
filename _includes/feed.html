@@ -1,9 +1,32 @@
-<section class="feed">
+<section class="{{sectionName}}">
     {% assign categoryPosts = site.posts | where: "category", categoryType %}
-    {% for post in categoryPosts %}
+    {% for post in categoryPosts | offset: displayOffset limit: displayLimit %}
         <div class="feed-card">
-            {%- assign postImage = post.image | relative_url -%}
-            
+            <div class="card-image">
+                {%- assign postImage = post.image | relative_url -%}
+                {% if postImage %}
+                    <img src="{{postImage}}" alt="" class="featured-image">
+                {% else %}
+                    {% assign defaultImage = "/assets/images/4.jpg" | relative_url %}
+                    <img src="{{defaultImage}}" alt="" class="featured-image">
+                {% endif %}
+            </div>
+            <div class="card-content">
+                <div class="card-title">
+                    {%- assign postTitle = post.title | escape -%}
+                    {%- assign postUrl = post.url | relative_url -%}
+                    <span class="title"><a href="{{postUrl}}" class="post-link">{{postTitle}}</a></span>
+                </div>
+                <div class="excerpt">
+                    {%- assign postExcerpt = post.excerpt | strip_html | escape -%}
+                    <span class="excerpt">{{postExcerpt}}</span>
+                </div>
+                <div class="card-date">
+                    {%- assign postDate = post.date | date: "%b %d, %Y" -%}
+                    <span class="date">{{postDate}}</span>
+                </div>
+            </div>
+
         </div>
     {% endfor %}
 </section>

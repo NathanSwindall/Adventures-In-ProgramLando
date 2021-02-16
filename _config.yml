@@ -40,6 +40,9 @@ copyright: "Swin Deasy LLC"
 google_analytics: G-VZP2PY1NH1
 
 
+excerpt_separator: .
+
+
 # Build settings
 # Turned into regular them
 # theme: minima
