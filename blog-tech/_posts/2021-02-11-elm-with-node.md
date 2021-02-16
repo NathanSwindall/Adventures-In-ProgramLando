@@ -1,4 +1,11 @@
-# Using Node with Elm (unfinished)
+---
+layout: post
+title: Using Node with Elm
+category: tech
+image: /assets/images/3.jpg
+---
+
+
 
 Here's the table of contents:
 

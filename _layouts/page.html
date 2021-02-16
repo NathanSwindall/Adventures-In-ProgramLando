@@ -11,4 +11,9 @@ layout: default
     {{ content }}
   </div>
 
+  {%- assign categoryType = page.category -%}
+  {% if categoryType == "tech" or categoryType == "general" %}
+      {% include feed.html %}
+  {% endif %}
+
 </article>

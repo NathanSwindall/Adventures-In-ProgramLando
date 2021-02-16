@@ -1,0 +1,9 @@
+<section class="feed">
+    {% assign categoryPosts = site.posts | where: "category", categoryType %}
+    {% for post in categoryPosts %}
+        <div class="feed-card">
+            {%- assign postImage = post.image | relative_url -%}
+            
+        </div>
+    {% endfor %}
+</section>
