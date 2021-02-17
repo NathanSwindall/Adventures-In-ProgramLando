@@ -27,7 +27,7 @@ This is my blog for my journey through the programming world and uncovering all 
 
 
 {% assign scriptUrl = "/assets/scripts/answerButton.js" %}
-<script src="{{scriptUrl| relative_url}}" type="text/javascript"></script>
+<script src="{{scriptUrl| relative_url}}"></script>
 {{scriptUrl}}
 
 
@@ -53,7 +53,8 @@ square x = x * x
 <button onClick="myfunc()">console log</button>
 <button>hello</button>
 
-
+{% assign scriptUrl3 = "/assets/scripts/Answer.js" %}
+<script src = "{{ scriptUrl3 | relative_url }}"><script>
     
 
 
