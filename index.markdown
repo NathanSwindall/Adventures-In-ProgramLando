@@ -26,7 +26,7 @@ This is my blog for my journey through the programming world and uncovering all 
 <p>Also, if you haven't, please subscribe to my RSS feed for updated posts.</p>
 
 
-{% assign scriptUrl = "/assets/scripts/answerButton.js" %}
+{% assign scriptUrl = "/assets/scripts/AnswerButton.js" %}
 <script src="{{scriptUrl| relative_url}}"></script>
 {{scriptUrl}}
 
