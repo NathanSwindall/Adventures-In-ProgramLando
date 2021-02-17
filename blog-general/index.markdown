@@ -3,7 +3,7 @@
 # To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 
 layout: page
-title: "General blog"
+title: "Random blog"
 category: general
 permalink: /general-blog
 ---
