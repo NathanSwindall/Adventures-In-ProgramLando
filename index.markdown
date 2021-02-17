@@ -52,7 +52,7 @@ square x = x * x
 
 <h1>fdfdf<h1>
 <button onClick="myfunc()">console log</button>
-
+<button>hello</button>
 
 
     
