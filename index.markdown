@@ -28,7 +28,7 @@ This is my blog for my journey through the programming world and uncovering all 
 
 {% assign scriptUrl = "/blog-tech/assets/js/answerButton.js" | relative_url %}
 <script src="{{scriptUrl}}"></script>
-<script src="/blog-tech/assets/js/answerButton.js">
+<script src="/blog-tech/assets/js/answerButton.js"></script>
 {{scriptUrl}}
 
 
