@@ -25,3 +25,31 @@ This is my blog for my journey through the programming world and uncovering all 
 
 <p>Also, if you haven't, please subscribe to my RSS feed for updated posts.</p>
 
+
+{% assign scriptUrl = "/blog-tech/assets/js/answerButton.js" | relative_url %}
+<script src="{{scriptUrl}}"></script>
+
+
+<answer-button answer_target=1></answer-button>
+<div markdown="1" id=1>
+```elm
+import HTTP
+square : number -> number
+square x = x * x 
+```
+</div>
+
+
+<iframe src="https://repl.it/languages/haskell" title="Haskell Repl"></iframe>
+
+
+
+
+
+
+    
+
+
+
+
+
