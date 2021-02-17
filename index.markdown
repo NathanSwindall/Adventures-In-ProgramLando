@@ -4,6 +4,7 @@
 
 layout: home2
 frontpage: featuredpost
+answer_button: /blog-tech/assets/js/answerButton.js
 ---
 
 
@@ -26,8 +27,8 @@ This is my blog for my journey through the programming world and uncovering all 
 <p>Also, if you haven't, please subscribe to my RSS feed for updated posts.</p>
 
 
-{% assign scriptUrl = "/blog-tech/assets/js/answerButton.js" | relative_url %}
-<script src="{{scriptUrl}}" type="text/javascript"></script>
+{% assign scriptUrl = "/blog-tech/assets/js/answerButton.js" %}
+<script src="{{scriptUrl | relative_url}}" type="text/javascript"></script>
 {{scriptUrl}}
 
 
