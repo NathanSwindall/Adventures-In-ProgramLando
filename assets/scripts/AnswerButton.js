@@ -15,5 +15,5 @@ class AnswerButton extends HTMLElement {
   }
 }
 
-
+console.log("I am in the Answer Button script")
 customElements.define('answer-button', AnswerButton);
