@@ -1,14 +1,19 @@
 <section class="{{sectionName}}">
-    {% assign categoryPosts = site.posts | where: "category", categoryType %}
+    {%- if categoryType -%}
+        {% assign categoryPosts = site.posts | where: "category", categoryType %}
+    {%- else -%}
+        {% assign categoryPosts = site.posts | where: "frontpage", frontpage -%}
+    {% endif %}
     {% for post in categoryPosts | offset: displayOffset limit: displayLimit %}
         <div class="feed-card">
             <div class="card-image">
+                {%- assign postUrl = post.url | relative_url -%}
                 {%- assign postImage = post.image | relative_url -%}
                 {% if postImage %}
-                    <img src="{{postImage}}" alt="" class="featured-image">
+                    <a href="{{postUrl}}"><img src="{{postImage}}" alt="" class="featured-image"></a>
                 {% else %}
                     {% assign defaultImage = "/assets/images/4.jpg" | relative_url %}
-                    <img src="{{defaultImage}}" alt="" class="featured-image">
+                    <a href="{{postUrl}}"><img src="{{defaultImage}}" alt="" class="featured-image"></a>
                 {% endif %}
             </div>
             <div class="card-content">
@@ -18,7 +23,7 @@
                     <span class="title"><a href="{{postUrl}}" class="post-link">{{postTitle}}</a></span>
                 </div>
                 <div class="excerpt">
-                    {%- assign postExcerpt = post.excerpt | strip_html | escape -%}
+                    {%- assign postExcerpt = post.summary | strip_html | escape -%}
                     <span class="excerpt">{{postExcerpt}}</span>
                 </div>
                 <div class="card-date">
