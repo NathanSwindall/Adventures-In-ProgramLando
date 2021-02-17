@@ -7,11 +7,7 @@ class AnswerBox2 extends HTMLElement {
         answerDiv.setAttribute('id',id)
         let button = document.createElement('button')
         answerDiv.style.display = "block"
-        answerDiv.innerText = `
-        ```
-        hello
-        ```
-        `
+        answerDiv.innerText = markdown
         button.addEventListener('click', () => {
             if(answerDiv.style.display == "none")
             {

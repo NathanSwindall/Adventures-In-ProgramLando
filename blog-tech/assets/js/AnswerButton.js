@@ -1,7 +1,7 @@
 class AnswerButton extends HTMLElement {
     connectedCallback() {
-        let id = this.getAttribute('answer_target')
-        let button = document.createElement('button')
+        var id = this.getAttribute('answer_target')
+        var button = document.createElement('button')
         button.innerText = `Answer`
         button.addEventListener('click', function () {
             var x = document.getElementById(id)
