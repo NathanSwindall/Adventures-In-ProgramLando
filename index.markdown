@@ -40,7 +40,7 @@ square x = x * x
 </div>
 
 
-<iframe src="https://repl.it/languages/haskell" title="Haskell Repl"></iframe>
+<iframe frameborder="0" width="100%" height="500px" src="https://repl.it/@ThomasSwindall/GrandioseFatalStrategy?lite=true"></iframe>
 
 
 
