@@ -46,15 +46,7 @@ square x = x * x
 <button onClick="myfunc()">console log</button>
 <iframe frameborder="0" width="100%" height="500px" src="https://repl.it/@ThomasSwindall/GrandioseFatalStrategy?lite=true"></iframe>
 
-{% assign scriptUrl2 = "/assets/scripts/console.js" %}
-<script src="{{scriptUrl2 | relative_url}}"></script>
 
-<h1>fdfdf<h1>
-<button onClick="myfunc()">console log</button>
-<button>hello</button>
-
-{% assign scriptUrl3 = "/assets/scripts/Answer.js" %}
-<script src = "{{ scriptUrl3 | relative_url }}"><script>
     
 
 

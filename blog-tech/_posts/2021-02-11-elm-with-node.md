@@ -1,8 +1,11 @@
 ---
 layout: post
-title: Using Node with Elm
+title_article: Using Node with Elm
 category: tech
 image: /assets/images/3.jpg
+date: 2021-02-11
+summary: Serve up your Elm apps with a lightweight backend server
+author: Nathan Swindall
 ---
 
 
