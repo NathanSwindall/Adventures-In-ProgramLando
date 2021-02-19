@@ -21,7 +21,7 @@ My first idea was to use a shadow DOM, because I could style these components in
 
 Before I actually tried to connect a shadow DOM onto any of my elements, I first had to get familiar with using custom Html tags. The code below gives a component that is really just an h1 tage encapsulated by the custom tag. Go ahead and make a JavaScript file labeled HelloWorld.js and put the following code in it. 
 
-```JavaScript
+```js
 class HelloWorld extends HTMLElement {
     connectedCallback() {
       this.innerHTML = `<h1>Hello world</h1>`;
@@ -33,7 +33,7 @@ customElements.define('hello-world', HelloWorld);
 
 Another way you could write this same code is by using `document.createElement('h1')` and the `appendChild` function. If we were to do it this way the code would become the following. 
 
-```JavaScript
+```js
 class HelloWorld extends HTMLElement {
     connectedCallback() {
       let h1 = document.createElement('h1')
@@ -73,7 +73,7 @@ And Presto! We have our first custom Html element to use with our html files, th
 
 The way I often use custom html tags is to encapsulate many different things into one tag, so they become isolated tags you can kind of stamp on your html document. For example, let's say we wanted to add a button and some javascript into this custom tag. Let's make the button do something very trivial like just printing "You clicked me, thanks" to the console. You could wire it up as the following. 
 
-```JavaScript
+```js
 class HelloWorld extends HTMLElement {
     connectedCallback() {
     
