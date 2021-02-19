@@ -42,8 +42,7 @@ square x = x * x
 
 
 
-<h1>fdfdf<h1>
-<button onClick="myfunc()">console log</button>
+
 <iframe frameborder="0" width="100%" height="500px" src="https://repl.it/@ThomasSwindall/GrandioseFatalStrategy?lite=true"></iframe>
 
 
