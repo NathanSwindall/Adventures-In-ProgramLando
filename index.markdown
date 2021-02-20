@@ -26,27 +26,6 @@ This is my blog for my journey through the programming world and uncovering all 
 <p>Also, if you haven't, please subscribe to my RSS feed for updated posts.</p>
 
 
-{% assign scriptUrl = "/blog-tech/assets/js/AnswerButton.js" %}
-<script src="{{scriptUrl| relative_url}}"></script>
-{{scriptUrl}}
-
-
-<answer-button answer_target=1></answer-button>
-<div markdown="1" id=1>
-```elm
-import HTTP
-square : number -> number
-square x = x * x 
-```
-</div>
-
-
-
-
-<iframe frameborder="0" width="100%" height="500px" src="https://repl.it/@ThomasSwindall/GrandioseFatalStrategy?lite=true"></iframe>
-
-
-    
 
 
 
