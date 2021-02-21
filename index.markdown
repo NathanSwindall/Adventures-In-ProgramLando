@@ -7,13 +7,14 @@ frontpage: featuredpost
 ---
 
 {%- assign frontpagePic = "/assets/images/front-page.jpg" | relative_url -%}
-<img src="{{frontpagePic}}" style="border-radius:50%;object-fit:cover;display:block;margin-left:auto;margin-right:auto;width:100%" width=500 height=500>
+{%- assign featuredPostUrl = "/blog-tech/tech/2021/01/14/Elm_Box.html" | relative_url -%}
+<a href="{{featuredPostUrl}}"><img src="{{frontpagePic}}" style="border-radius:50%;object-fit:cover;display:block;margin-left:auto;margin-right:auto;width:100%" width=500 height=500></a>
 
 
 
 <h1 class="front-page-header">Welcome!</h1>
 
-This is my blog for my journey through the programming world and uncovering all the beauties and splendors along the way. I hope you have as much fun exploring the many blog posts as I did creating them, and If you are new here, there are two different blogs. One is my tech blog which I tackle fun and exciting frontiers like the world of functional programming and the other is ... well ... just random. I talk about fun topics such as getting your irish citizenship and cooking persian dishes. Enjoy!
+This is my blog for my journey through the programming world and uncovering all the beauties and splendors along the way. I hope you have as much fun exploring the many blog posts as I did creating them, and If you are new here, there are two different blogs. One is my tech blog which I tackle fun and exciting frontiers like the world of functional programming and the other is ... well ... just random. I talk about fun topics such as getting your irish citizenship and cooking persian dishes. Click the big picture if you want to see one of my posts immediately. Enjoy!
 
 
 <!-- <h2 class="featured-post-header">Featured post</h2>
