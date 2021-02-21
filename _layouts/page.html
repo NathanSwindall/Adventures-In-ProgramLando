@@ -13,7 +13,7 @@ layout: default
 
   {%- assign categoryType = page.category -%}
   {% if categoryType == "tech" or categoryType == "general" %}
-    <h2>Featured post</h2>
+    <h2 class="featured-post-header">Featured post</h2>
     {%- assign displayOffset = 0 -%}
     {%- assign displayLimit = 1 -%}
     {%- assign sectionName = "featured-post" -%}
@@ -29,7 +29,7 @@ layout: default
       {%- assign displayOffset = 1 -%}
       {%- assign displayLimit = null -%}
       {%- assign sectionName = "feed" -%}
-      <h2>Posts</h2>
+      <h2 class="blog-posts-header">Posts</h2>
       {% include feed.html %}
     {% endif %}
   {% endif %}
