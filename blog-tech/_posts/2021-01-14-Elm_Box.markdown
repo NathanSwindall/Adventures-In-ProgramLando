@@ -1,14 +1,14 @@
 ---
 layout: post
 category: tech
-title_article: Elm Basic Tutorial
+title: Elm Basic Tutorial
 image: /assets/images/1.jpg
 frontpage: frontpage
 summary: A purely functional language for front-end apps
 date: 2021-01-14
 author: Nathan Swindall
 ---
-
+<link rel="icon" type="image/png" sizes="512x512" href="assets/images/fav2.png">
 
 
 Table of Contents:

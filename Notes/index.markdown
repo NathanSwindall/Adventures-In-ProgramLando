@@ -2,10 +2,12 @@
 # Feel free to add content and custom Front Matter to this file.
 # To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 
-layout: page
-title: Life blog
-category: general
-permalink: /general-blog
+layout: page_notes
+title: Notes
+category: notes
+permalink: /Notes
 ---
+
+
 
 

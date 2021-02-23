@@ -1,8 +1,10 @@
 ---
 layout: page
 title: About
-permalink: /about/
+permalink: /about
+category: about
 ---
+
 
 # About
 

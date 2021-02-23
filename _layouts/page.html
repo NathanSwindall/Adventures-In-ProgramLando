@@ -4,7 +4,7 @@ layout: default
 <article class="post">
 
   <header class="post-header">
-    <h1 class="post-title">{{ page.title_article | escape }}</h1>
+    <h1 class="post-title">{{ page.title_| escape }}</h1>
   </header>
 
   <div class="post-content">
@@ -21,7 +21,7 @@ layout: default
   {% endif %}
 
 
-  {%- assign sectionName = "feed" -%}
+  
   {%- assign categoryPosts = site.posts | where: "category", categoryType -%}
   {%- assign numberOfCategoryPosts = categoryPosts.size -%}
   {% if categoryType == "tech" or categoryType == "general" %}

@@ -1,7 +1,7 @@
 ---
 layout: post
 category: tech
-title_article: Custom Html Tags
+title: Custom Html Tags
 image: /assets/images/9.jpg
 summary: Flavoring your html files for the perfect recipe
 date: 2021-02-17

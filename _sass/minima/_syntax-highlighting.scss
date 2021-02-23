@@ -12,7 +12,7 @@
 
   .c     { color: #998; font-style: italic } // Comment
   .err   { color: #a61717; background-color: #e3d2d2 } // Error
-  .k     { font-weight: bold } // Keyword
+  .k     { font-weight: bold; color: #e8d080 } // Keyword
   .o     { font-weight: bold; color: #7ccc98 } // Operator
   .cm    { color: #998; font-style: italic } // Comment.Multiline
   .cp    { color: #999; font-weight: bold } // Comment.Preproc
@@ -45,7 +45,8 @@
   .ne    { color: #900; font-weight: bold } // Name.Exception
   .nf    { color: #900; font-weight: bold } // Name.Function
   .nn    { color: #eddae6} // Name.Namespace
-  .nt    { color: #000080 } // Name.Tag
+  .nx    { color: #d3edc0}
+  .nt    { color: #c5c0ed} // Name.Tag
   .nv    { color: #008080 } // Name.Variable
   .ow    { font-weight: bold } // Operator.Word
   .w     { color: #bbb } // Text.Whitespace

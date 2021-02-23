@@ -1,7 +1,7 @@
 ---
 layout: post
 category: tech
-title_article: Installing Euterpea
+title: Installing Euterpea
 image: /assets/images/2.jpg
 summary: Dealing with Haskell ghc hell!
 date: 2021-02-19
