@@ -8,7 +8,9 @@ summary: A purely functional language for front-end apps
 date: 2021-01-14
 author: Nathan Swindall
 ---
-<link rel="icon" type="image/png" sizes="512x512" href="assets/images/fav2.png">
+
+
+
 
 
 Table of Contents:
@@ -16,38 +18,44 @@ Table of Contents:
 1. TOC
 {:toc}
 
-## Prereqs
+## **Prereqs**
 
-In order to do this tutorial, you need to have elm installed on your system. The easiest way to install elm is to do so through npm. If you don't have node already, then go over to [nodejs.org](https://nodejs.org/en/). Then, once you have this installed (it should come with npm), you can run the command `npm install -g elm` which will install elm to your system. I am using the ide [visual studio code](https://code.visualstudio.com/) which has a great plugin for elm which is made by [elm-tooling](https://marketplace.visualstudio.com/items?itemName=Elmtooling.elm-ls-vscode). I made quick youtube video that covers the installation and repl here [elm installation and repl](https://www.youtube.com/watch?v=5XT5Qh5xdyI&t=254s).
+In order to do this tutorial, you need to have elm installed on your system. The easiest way to install elm is to do so through npm. If you don't have node already, then go over to [nodejs.org](https://nodejs.org/en/). Then, once you have this installed (it should come with npm), you can run the command `npm install -g elm` which will install elm to your system. I am using the ide [visual studio code](https://code.visualstudio.com/) which has a great plugin for elm which is made by [elm-tooling](https://marketplace.visualstudio.com/items?itemName=Elmtooling.elm-ls-vscode). I made a quick youtube video that covers the installation and repl here [elm installation and repl](https://www.youtube.com/watch?v=5XT5Qh5xdyI&t=254s).
 
-## Initial Problem
+## **Initial Problem**
 
-There exists a factory in Norway that has a huge problem with their products. When they package their products into a small-sized box, the products keep getting destroyed by all the trolls that live in Norway. The head boss of the factory came up with a brilliant idea to wrap the small-sized boxes into medium-sized boxes, and then again in large-sized boxes. Thus, all the products are first packaged in small boxes that can hold only one product. Then, each of these boxes are further packed into medium-sized boxes which can hold only two small boxes. Finally, these boxes are then packaged into large-sized boxes that can hold only two medium-sized boxes.
+There exists a factory in Norway that has a huge problem with their products. When they package their products into a cardboard box, the products keep getting destroyed by all the trolls that live in Norway. The head boss of the factory came up with a brilliant idea to wrap the boxes into a bigger wooden container, and then wrap these bigger wooden containers into a large steel container. Thus, all the products are first packaged in small boxes that can hold only one product. Then, each of these boxes are further packed into a wooden container which can hold only two small boxes. Finally, these wooden containers are then packaged into metal containers that can hold two wooden containers. The boss initially tried out this idea by coveniently placing the box next to some trolls and to his amazement, they couldn't break the packages. Now that they have the basic setup for their packaging, they need to create the machinery to package all the boxes efficiently. One coworker who has been secretly programming in Elm at work unbeknownst to the boss, thinks elm would be the best way to implement this new packaging system.
 
-## Basics
+[img of troll trying to get into box]
+
+## **Basics**
+
 
 Feel free to skip this part if you are already familiar with some of the elm syntax. 
 
-### primitive types
+### **Primitive Types**
 
 The first thing you want to do to get started is getting used to the elm repl. In order to open the elm repl in your terminal all you have to do is type in `elm repl`. Once you are in the elm repl you can enter very basic items to get a foot on how the language acts. For example, if you enter:
 
 ```elm
-"Hello, World"
+"Trolls Beware"
 ```
 
-You get back the following. 
+You get back the following:
+<p> </p>
+{%- assign trollsBewareUrl ="blog-tech/assets/images/elm-basics/trolls-beware.png" | relative_url -%}
+<img src="{{trollsBewareUrl}}">
 
-[img]
 
 You'll notice that this has `::String` at the end of it. This is the type of the value you entered into the repl. This will become very important as you move on into more advance topics. You can type in a few other stuff too like numbers and floats and do basic arithmetic.
 
-[img]
+<p> </p>
+<img src="{{"blog-tech\assets\images\elm-basics\basic-math.png" | relative_url}}">
 
 
-### functions
+### **Functions**
 
-#### type signatures
+#### *Type Signatures*
 
 We can even create your own simple functions. For example you can a simple square function by putting `square x = x*x` into the repl. When you put this into the repl, you'll notice that you get back a weird type signature which is `<function> : number -> number`. Whenever you see the `->` you know that you are working with a function. The signature is saying that the function takes a number and returns a number. We can create other functions and see what their type signatures are. For example, we can do multiple arguments such as `add a b c = a + b + c`. You'll notice that the type signature for this function is `<function> : number -> number -> number`. This is saying that you have a function that takes a number, and then it takes another number, and finally returns a number. 
 
@@ -62,7 +70,7 @@ Not the most exciting function but it has many important properties. If you just
 
 You can put the type signature into the repl, but you have to put it in as the first line. So first enter `stringForNumber : String -> number` first and then enter `stringForNumber myStr = 42`. 
 
-#### partial application
+#### *Partial Application*
 
 Going back to the add function we created earlier, if we actually try this function we just supply three numbers and we will get back them all added together.
 
@@ -80,16 +88,16 @@ This is called partial application. In many languages such as JavaScript, they t
 {%- assign imgUrl = "/assets/gifs/elm-add.gif" | relative_url -%}
 <img src="{{imgUrl}}" class="gif-image">
 
-#### anonymous functions
+#### *Anonymous Functions*
 
 The last basic topic we will cover about functions will be anonymous functions. If you have ever used node.js, you are probably very familiar with arrow functions which are just anonymous functions. In Elm, you write an anonymous function using the syntax like `\x -> x + 10`. You can also put in multiple arguments into an anonymous function like this `\x y -> x + y`. Below is a small repl session that uses anonymous functions. 
 
 [img of repl session with anonymous functions]
 
-## Recursions
+## **Recursion**
 
 
-## Problem
+## **Problem**
 
 
 [next page](../../../nextpages/nextpage)
