@@ -50,7 +50,8 @@ You get back the following:
 You'll notice that this has `::String` at the end of it. This is the type of the value you entered into the repl. This will become very important as you move on into more advance topics. You can type in a few other stuff too like numbers and floats and do basic arithmetic.
 
 <p> </p>
-<img src="{{"blog-tech\assets\images\elm-basics\basic-math.png" | relative_url}}">
+{%- assign basicMath = "blog-tech\assets\images\elm-basics\basic-math.png" | relative_url -%}
+<img src="{{basicMath}}">
 
 
 ### **Functions**
