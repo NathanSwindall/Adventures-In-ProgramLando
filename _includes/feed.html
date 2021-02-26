@@ -2,7 +2,7 @@
     {%- if categoryType -%}
         {% assign categoryPosts = site.posts | where: "category", categoryType %}
     {%- else -%}
-        {% assign categoryPosts = site.posts | where: "frontpage", frontpage -%}
+        {%- assign categoryPosts = site.posts | where: "frontpage", frontpage -%}
     {% endif %}
     {% for post in categoryPosts | offset: displayOffset limit: displayLimit %}
         <div class="feed-card">

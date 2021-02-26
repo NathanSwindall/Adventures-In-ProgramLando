@@ -5,9 +5,9 @@ layout: default
 
   <header class="post-header">
     <!-- This is code that I added for choosing default img or selected img -->
-    {% if page.image -%}
-    <img src="{{- page.image | relative_url -}}" alt="" class="featured-image-post">
-    {% else -%}
+    {%- if page.image -%}
+    <img src="{{ page.image | relative_url }}" alt="" class="featured-image-post">
+    {%- else -%}
     {%- assign postImage = "/assets/images/13.jpg" -%}
     <img src="{{- postImage | relative_url -}}" alt="" class="featured-image-post">
     {%- endif -%}

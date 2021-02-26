@@ -111,6 +111,29 @@ cello251 = instrument Cello minor251
 --Let's play this chord progression together with a piano
 playCelloPiano :: IO ()
 playCelloPIano = play $ t251 :=: cello251 --plays at the same time
+
+
+--To make the tempo twice as long
+sloweriiVI = tempo (1/2::Dur) t251
+-- or write
+sloweriiVI = tempo (1 % 2) t251
+-- or write
+sloweriiVI = tempo 0.5 t251
+
+--To make the tempo twice as short
+fasteriiVI = tempo (2::Dur) t251
+```
+
+
+I have an idea where I want to keep transposing the ii-V-I progression down a half step for 8 rounds. Thus it will play the progression and then it will play the progression gain but a half step lower and then so on and so forth. I would like to increase the tempo to by this time. How would I go about doing this. 
+
+```haskell
+
+--to transpose a piece I can use the transpose function
+transposeDown = transpose (-1) t251
+transposeUp = transpose (1) t251
+
+
 ```
 
 
