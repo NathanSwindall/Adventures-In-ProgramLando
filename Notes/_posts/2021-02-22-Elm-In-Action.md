@@ -24,5 +24,6 @@ author: Nathan Swindall
 
 {% assign JSONurl = "Notes/Chapters/ElmInAction/JsonManipulation" | relative_url %} 
 <a href="{{JSONurl}}">JSON Manipulation</a>
-
+{% assign JSONurl = "Notes/Chapters/ElmInAction/GodCompiler" | relative_url %} 
+<a href="{{JSONurl}}">God Compiler</a>
 
