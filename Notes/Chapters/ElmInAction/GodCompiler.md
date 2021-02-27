@@ -7,10 +7,39 @@ date: 2021-02-23
 author: Nathan Swindall
 ---
 
+### **God Compiler**
 
 On section 5 of the Elm in Action book, the author decides to split off the code. You can either use a record or make new data types in order to accomplish the same thing. In the elm code below. I opted for the more flexible route which was to have the filters in my Model type alias as a List { name: String, amount: Int}. This type would give more flexibility when it comes to adding different filters to the photogroove app. The author noted that this route was more prone to bugs because someone could mistype one of the strings. Your code will still compile just fun and you wouldn't get any errors, so you would have to search your code base for the bug. 
 
-Unfortunately, I spent over two hours trying to figure out why my filter labels were not updating in the code after implementing this strategy. It Ironically turned out to be because I had an error in my javascript code that was due to a string being mistyped. This is the exact reason why the author of Elm In Action said not to use the filter List { name: String, amount: Int} type because as the project scales, a simple mistyped string could cause a huge headache for developers. 
+
+Unfortunately, I spent over two hours trying to figure out why my filter labels were not updating in the code after implementing this strategy. I used the Debug module in my update function under the case for SlidFilter. So I did something like the following.
+
+```elm
+import Debug as D
+
+
+...SlidFilter name amount -> 
+                let
+                    transform filter = 
+                        if filter.name == name then 
+                            { name = name
+                            , amount = D.log "amount" amount
+                            }
+                        else 
+                            D.log "filter" filter
+                    filters = 
+                        model.filters
+                            |> List.map transform
+                in
+                    ( { model | filters = filters }
+                    , Cmd.none)
+                
+
+```
+
+Because I used the `D.log` in both the if and else statements. They should have been at least hitting one of them when the case expression hit `Slidfilter`, but it was hitting neither of them. Thus, for some reason the custom event I set up was not being serviced by my `onSlid` function. 
+
+After two hours, it Ironically turned out to be because I had an error in my javascript code that was due to a string being mistyped. This is the exact reason why the author of Elm In Action said not to use the filter List { name: String, amount: Int} type because as the project scales, a simple mistyped string could cause a huge headache for developers. 
 
 His solution to this problem, while not being the most consise, was to make brand new types so that the compiler will always catch them at compile time. With this being the case, bugs like the one mentioned before won't happen in at least your elm code. Unfortunately, you can't say the same for you JavaScript code like for the example below. This is why you should maybe always code so that the compiler will be there to pick you up when things go wrong. 
 
