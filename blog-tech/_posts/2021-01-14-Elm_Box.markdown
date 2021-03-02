@@ -26,7 +26,6 @@ In order to do this tutorial, you need to have elm installed on your system. The
 
 There exists a factory in Norway that has a huge problem with their products. When they package their products into a cardboard box, the products keep getting destroyed by all the trolls that live in Norway. The head boss of the factory came up with a brilliant idea to wrap the boxes into a bigger wooden container, and then wrap these bigger wooden containers into a large steel container. Thus, all the products are first packaged in small boxes that can hold only one product. Then, each of these boxes are further packed into a wooden container which can hold only two small boxes. Finally, these wooden containers are then packaged into metal containers that can hold two wooden containers. The boss initially tried out this idea by coveniently placing the box next to some trolls and to his amazement, they couldn't break the packages. Now that they have the basic setup for their packaging, they need to create the machinery to package all the boxes efficiently. One coworker who has been secretly programming in Elm at work unbeknownst to the boss, thinks elm would be the best way to implement this new packaging system.
 
-[img of troll trying to get into box]
 
 ## **Basics**
 
@@ -42,66 +41,181 @@ The first thing you want to do to get started is getting used to the elm repl. I
 ```
 
 You get back the following:
-<p> </p>
-{%- assign trollsBewareUrl ="blog-tech/assets/images/elm-basics/trolls-beware.png" | relative_url -%}
-<img src="{{trollsBewareUrl}}">
+
+```elm
+> "Trolls Beware"
+"Trolls Beware" : String
+```
 
 
-You'll notice that this has `::String` at the end of it. This is the type of the value you entered into the repl. This will become very important as you move on into more advance topics. You can type in a few other stuff too like numbers and floats and do basic arithmetic.
+You'll notice that this has `:String` at the end of it. This is the type of the value you entered into the repl. This will become very important as you move on into more advance topics. You can type in a few other stuff too like numbers and floats and do basic arithmetic.
 
-<p> </p>
-{%- assign basicMath = "blog-tech/assets/images/elm-basics/basic-math.png" | relative_url -%}
-<img src="{{basicMath}}">
+```elm
+> 3.0
+3 : Float
+> 4 + 3
+7 : number
+> 4 + 3.0
+7 : Float
+> 3 ^2 
+9 : number
+```
 
 
 ### **Functions**
 
 #### *Type Signatures*
 
-We can even create your own simple functions. For example you can a simple square function by putting `square x = x*x` into the repl. When you put this into the repl, you'll notice that you get back a weird type signature which is `<function> : number -> number`. Whenever you see the `->` you know that you are working with a function. The signature is saying that the function takes a number and returns a number. We can create other functions and see what their type signatures are. For example, we can do multiple arguments such as `add a b c = a + b + c`. You'll notice that the type signature for this function is `<function> : number -> number -> number`. This is saying that you have a function that takes a number, and then it takes another number, and finally returns a number. 
+We can even create your own simple functions. For example you can create a simple square function by putting `square x = x*x` into the repl. When you put this into the repl, you'll notice that you get back a weird type signature which is `<function> : number -> number`. Whenever you see the `->` you know that you are working with a function. The signature is saying that the function takes a number and returns a number. 
 
-You can actually specify the type signature for a function. All you have to in order to do this is to put the type signature above the function. Let's make a really useless function that takes any type of string and returns 42.
+```elm
+> square x = x * x
+<function> : number -> number
+```
+
+We can create other functions and see what their type signatures are. For example, we can do multiple arguments such as `add a b c = a + b + c`. You'll notice that the type signature for this function is `<function> : number -> number -> number`. This is saying that you have a function that takes a number, and then it takes another number, and finally returns a number. 
+
+```elm
+> add a b c = a + b + c
+<function> : number -> number -> number -> number
+```
+
+
+You can actually specify the type signature for a function. All you have to do is to put the type signature above the function. Let's make a really useless function that takes any type of string and returns 42.
 
 ```elm
 stringForNumber : String -> number
 stringForNumber myStr = 42
 ```
 
-Not the most exciting function but it has many important properties. If you just put the function without the type signature into the repl then you will get a type signature that is a little different which is `<function> : a -> number`. Whenever you have a lowercase type in the type signature, it means that this type is variable. Thus, the `a` in the type signature is a variable and it can be any type such as a list, number, or an algebraic type which we will learn about later. 
+Not the most exciting function but it has many important properties. If you just put the function without the type signature into the repl then you will get a type signature that is a little different which is `<function> : a -> number`. Whenever you have a lowercase type in the type signature, it means that this type is variable. Thus, the `a` in the type signature is a variable and it can be any type such as a list, number, or an algebraic type which we will learn about later. The compiler doesn't know what to put for it so it is variable.
 
 You can put the type signature into the repl, but you have to put it in as the first line. So first enter `stringForNumber : String -> number` first and then enter `stringForNumber myStr = 42`. 
 
 #### *Partial Application*
 
-Going back to the add function we created earlier, if we actually try this function we just supply three numbers and we will get back them all added together.
-
-[img dealing with add and adding all three pictures together]
-
-But what happens if we only call the function with only a few different arguments. So instead of calling something like `add 3 5 3`, we enter something like `add 3` into the repl. This is actually perfectly acceptable in Elm and it will actually give use back a new function that takes only two arguments. We can actually create new function based of adding knowing this fact. For example check out this picture:
-
-[img that has partial application with add]
-
-This is called partial application. In many languages such as JavaScript, they take their arguments as tuples so you can't leave off any of the arguments, but in Elm the arguments are curried. This means that you can supply fewer arguments to a function and get back another function. This feature of the language will come in handy later with shortening our code and make our code more readable.
+Going back to the add function we created earlier, if we actually try this function we just supply three numbers and we will get back them all added together. Absolutely ground breaking!
 
 
 
+But what happens if we only call the function with only a few different arguments. So instead of calling something like `add 3 5 3`, we enter something like `add 3` into the repl. This is actually perfectly acceptable in Elm and it will give use back a new function that takes only two arguments. We can create new function based on knowing this fact. For example check out this repl session:
 
-{%- assign imgUrl = "/assets/gifs/elm-add.gif" | relative_url -%}
-<img src="{{imgUrl}}" class="gif-image">
+```elm
+ add a b c = a + b + c
+<function> : number -> number -> number -> number
+> add 3
+<function> : number -> number -> number
+> addTwo = add 3 
+<function> : number -> number -> number
+> addTwo 3 2
+8 : number
+> addOne = addTwo 3
+<function> : number -> number
+> addOne 3
+9 : number
+```
+
+This is called partial application. In many languages such as JavaScript, they take their arguments as tuples (though you can curry them like in this example if you want :) ) so you can't leave off any of the arguments, but in Elm the arguments are curried. This means that you can supply fewer arguments to a function and get back another function. This feature of the language will come in handy later with shortening our code and making our code more readable.
+
 
 #### *Anonymous Functions*
 
 The last basic topic we will cover about functions will be anonymous functions. If you have ever used node.js, you are probably very familiar with arrow functions which are just anonymous functions. In Elm, you write an anonymous function using the syntax like `\x -> x + 10`. You can also put in multiple arguments into an anonymous function like this `\x y -> x + y`. Below is a small repl session that uses anonymous functions. 
 
-[img of repl session with anonymous functions]
+```elm
+> anonymous = \x -> x * x
+<function> : number -> number
+> anonymous 10
+100 : number
+nested = \x -> \y -> \z -> z + y + x      
+<function> : number -> number -> number -> number
+> nested 10 11 10
+31 : number
+```
 
-## **Recursion**
+The nested anonymous function is a little hard to wrap your head around at first, but once you start messing with elm in the repl I'm sure you will get the hang of it. It's quite fun and unlike any imperative languages such as Java which I have programmed in before (unless you started using the new function additions to the language).
+
+### **User Definted Data Types**
+
+Instead of just programming in primitives like strings, floats, and ints the whole time, we can actually create our own user defined data types. These data types are not exactly like classes if you come from any OOP language, but are more like enums. We will start out with our own basic data type which we will call Bucket. In order to create your own data type, all you have to do is use the keyword `type`. If you are coming from Haskell, the type word would be similar to `data` keyword, and `type alias` would be similar to the `type` in Haskell. I know... this probably added more clutter to your already spinning out of control mind after dealing with the above perplexities to a already confusioning language, but don't worry. I am sure you will get the hang of it after some examples. 
+
+The easiest example to help you understand the concept the best, but unbelievably boring is that of the Bool type. THis is just your vanilla True and False you see in other langauges. The way it is defined in Elm is very consie and to the point.
+
+```elm
+Type Bool = True | False
+```
+
+But forget I mentioned such utter dryness and lets focus on a more wet example such as a nice circular bucket. 
+
+```elm
+type Bucket = SmallBucket | BigBucket | BiggestBucket
+```
+
+This is our bucket above and what a beauty it is. Its type as you guessed it is `Bucket`, which is like any type for example String, or Int or our beloved Bool. Also, when you are making your own type you have to use a capital letter. You may have noticed while using the repl that the `String`, `Float`, and `Int` types are all capitalized. 
+
+Now here is the confusing part. What exactly are the `SmallBucket`, `BigBucket`, and `BiggestBucket`? Are these types too? Well, actually these are just constructor functions for creating the type `Bucket`. Thus, you can use these types in the repl and see your new creation right away. 
+
+```elm
+> type Bucket = SmallBucket | BigBucket | BiggestBucket
+> SmallBucket
+SmallBucket : Bucket
+> BigBucket
+BigBucket : Bucket
+> BiggestBucket
+BiggestBucket : Bucket
+> 
+```
 
 
-## **Problem**
+You can compare them to Bool becuase True and False are just ... and I hate to use this word with a functional language... instances of the Bool type. But how are these useful though? They seem almost completely unnecessary, but this is one of the coolest things about elm. These function constructors make finding bugs in your code and refactoring your code so easy that now whenever you code without them you will feel like you are missing something in life; like a long lost love you met on the italian peninsula who you are hoping will come back some day. To start with, we can make a simple else if function with our new type. First, let's see an example with out our new type. 
+
+```elm
+waterAmount : String -> String
+waterAmount bucket = 
+    if bucket == "SmallBucket"
+    then "Not a lot of water"
+    else if bucket == "BigBucket"
+    then "A little more water than the SmallBucket"
+    else "A lot of water"
+```
+
+A big problem with the above code is if you make a mistake writing a string. For example, if we call this function with the string `"smallBucket"`, we would get the wrong answer. 
+
+```elm
+> waterAmount "smallBucket"
+"A lot of water" : String
+```
+
+Our type can really narrow the amount of mistakes we make by getting rid of such errors. Now, if we enter a function with a badly typed argument, our compiler will let us know right away. Our new function with our bucket type is below. 
+
+```elm
+waterAmount : Bucket -> String
+waterAmount bucket = 
+    if bucket == SmallBucket
+    then "Not a lot of water"
+    else if bucket == BigBucket
+    then "A little more water than the SmallBucket"
+    else "A lot of water"
+```
+
+This still doesn't feel just right though. What if we have a custom Data type that has more than 20 constructor functions? Well, luckily elm gives us another conditional struture that is perfect for this scenario. This is the case structure. When we use the case structure, not only is our code less verbose, but it is also easier to parse as a programmer. 
+
+```elm
+waterAmount : Bucket -> String 
+waterAmount bucket = 
+    case bucket of 
+        SmallBucket -> "Not a lot of water"
+        BigBucket -> "More water than the small bucket"
+        BiggestBucket -> "I now have too much water"
+```
+
+Now we are really coooking! This new style opens so many possibilities, but guess what? We can do even more! The thing about our types is that they are buckets! So they should hold stuff like water or gold or whatever you put into your bucket at home. 
+
+```elm
+
+```
 
 
-[next page](../../../nextpages/nextpage)
 
 
 
