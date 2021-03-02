@@ -211,10 +211,6 @@ waterAmount bucket =
 
 Now we are really coooking! This new style opens so many possibilities, but guess what? We can do even more! The thing about our types is that they are buckets! So they should hold stuff like water or gold or whatever you put into your bucket at home. 
 
-```elm
-
-```
-
 
 
 
