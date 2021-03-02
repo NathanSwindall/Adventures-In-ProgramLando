@@ -134,5 +134,15 @@ transposeUp = transpose (1) t251
 
 
 ```
+There are some more useful function for getting the absolute pitch of a note (Pitch) and then turning this absolute pitch back into a Pitch. 
+
+```haskell
+absPitch :: Pitch -> AbsPitch 
+absPitch (pc, oct) = 12 ∗ (oct + 1) + pcToInt pc
+
+pitch :: AbsPitch → Pitch 
+pitch ap = let (oct, n) = divMod ap 12 in ([C,Cs, D, Ds, E, F, Fs, G, Gs, A, As, B] !! n, oct − 1)
+```
+the function `pcToInt` has a rather lengthy definition that I feel does not need to be shown here. It is just turning a PitchClass into a numnber from -2 to 13 so that the absPitch function will work correctly and give the correct gradation. 
 
 

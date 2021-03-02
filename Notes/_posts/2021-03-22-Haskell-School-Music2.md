@@ -19,5 +19,7 @@ author: Nathan Swindall
 {% assign Chapter2 = "Notes/Chapters/HSoM/Chapter2" | relative_url %} 
 <a href="{{Chapter2}}">Chapter 2</a>
 <!-- I noticed when I have .md it ruins the file -->
+{% assign Chapter2 = "Notes/Chapters/HSoM/Chapter2_Exercises" | relative_url %} 
+<a href="{{Chapter2}}">Chapter 2 Exercises</a>
 
 
