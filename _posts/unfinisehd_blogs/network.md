@@ -200,3 +200,12 @@ A layer 2 switch is nothing more than a bridge with three or more ports, just li
 # Layer 3 devices
 
 
+# Day 2
+
+Binary numbering. There is a calculator on windows where we can do binary on the calculator. 
+
+# IPv4 
+IP addresses are 32-big binary values: for readability purposes they're
+
+Network routable address IPv4 address. 
+
