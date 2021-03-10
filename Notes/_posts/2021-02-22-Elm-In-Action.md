@@ -28,4 +28,7 @@ author: Nathan Swindall
 <a href="{{JSONurl}}">God Compiler</a>
 {% assign JSONurl = "Notes/Chapters/ElmInAction/TestingCmds" | relative_url %} 
 <a href="{{JSONurl}}">Testing Commands in Elm</a>
-
+{% assign JSONurl = "Notes/Chapters/ElmInAction/TalkingtoJavaScript" | relative_url %} 
+<a href="{{JSONurl}}">Talking to JavaScript</a>
+{% assign JSONurl = "Notes/Chapters/ElmInAction/RandomNumbers" | relative_url %} 
+<a href="{{JSONurl}}">Random Numbers in Elm</a>

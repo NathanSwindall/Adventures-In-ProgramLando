@@ -81,3 +81,87 @@ Ok "cate@nolf.com" : Result Json.Decode.Error String
 
 So this function will get an email back for you from the above object. Unfortunately, if you have been around the internet for awhile, you will know that JSON strings usually have many fields, and sometimes you don't know exactly how many fields the JSON object will have depending on what the server is giving you back. 
 
+But before we move on, there is actually a better way of writting all the JSOn string files. Once we get to longer examples you will set that objects with multiple keys actually get quite unwieldy. Instead of the forward slash notation, we can use """ """ triple quotes. 
+
+```elm
+myEmailObject = """ {"email":"cate@nolf.com"}"""
+```
+Then if we use this, we will get the same result with out function. 
+
+
+There are actually special functions so that we can decode more than one field at a time. For example we can use the `Json.Decode.map2` function. Let's say we have the following JSON string to decode. 
+
+```json
+{"x": 4,
+ "Y": 5 }
+```
+
+We can create a special decoder to use with this JSON.
+
+```elm
+objectMultiDecoder =
+        Json.Decode.map2
+            (\x y -> (x, y))
+            (Json.Decode.field "x" Json.Decode.int)
+            (Json.Decode.field "y" Json.Decode.int)
+```
+
+Now let's create a function that will decode an JSON object with this specific structure. 
+
+```elm
+decodedTwoFields = Json.Decode.decodeString objectMultiDecoder
+```
+
+Decoding the string
+```elm
+xandyDecoded = decodedTwoFields """{"x":4,"y":5"}
+```
+
+Unfortunately, there isn't a mapX for all the different fields out there, and what if sometimes you will get a field that is there and a field that is not there. Your code would fail sometimes and not fail other times. Fortunately, there is a library that can help us with this and it is the `NoRedInk/elm-json-decode-pipeline`( `elm install NoRedInk/elm-json-decode-pipelin`). 
+
+We will add some more import statements to use the `required` and  `optional` functions from this library.
+
+```elm
+import Json.Decode exposing (Decoder, int, list, string, succeed)
+import Json.Decode.Pipeline exposing (optional, required)
+```
+
+The new JSON file we will be decoding: 
+
+```json
+{ "url": "www.manning.com",
+  "size": 3,
+  "title": "Elm-in-action"}
+```
+
+Here is a list JSON of that same JSON
+```json
+[{ "url": "www.manning.com",
+  "size": 3,
+  "title": "Elm-in-action"}.
+{ "url": "www.manning.com",
+  "size": "www.manning.com",
+  "title": "Elm-in-action" }]
+```
+
+We want to decode both of these. We can first try the original way, and because it has three diffferent fields we can use the `JSON.Decode.map3` with this JSON. Our first function will be the following. 
+
+```elm
+photoDecoder : Json.Decode.Decoder Photo
+photoDecoder = 
+    Json.Decode.map3 
+        (\url size title -> { url = url, size = size, title = title})
+        (Json.Decode.field "url" Json.Decode.string)
+        (Json.Decode.field "size" Json.Decode.int)
+        (Json.Decode.field "title" Json.Decode.string) 
+```
+
+Testing it out yields the following
+```elm
+threeFieldJson = """{ "url": "www.manning.com",
+  "size": 3,
+  "title": "Elm-in-action"}"""
+photoDecoded = Json.Decode.decodeString photoDecoder threeFieldJson
+```
+
+

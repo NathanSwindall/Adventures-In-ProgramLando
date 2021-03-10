@@ -96,3 +96,6 @@ I look forward to seeing you on the inside!" -**Udemy**
 {% assign Chapter2 = "Notes/Chapters/DavidBombalNetwork/TCPModel" | relative_url %} 
 <a href="{{Chapter2}}">TCP/IP Model</a>
 
+
+{% assign Chapter2 = "Notes/Chapters/DavidBombalNetwork/IPAddress" | relative_url %} 
+<a href="{{Chapter2}}">IP Addresses</a>
