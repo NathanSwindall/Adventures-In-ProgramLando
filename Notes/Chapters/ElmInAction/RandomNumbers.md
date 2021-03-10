@@ -74,6 +74,66 @@ randomPhotoPicker =
     Random.int 0 2
 ```
 
+Then, once we have this function we are going to want to put it in a message that can be sent to the elm runtime using the update function. In order to do this, we need a new function in the Random module which is `Random.generate`. 
+
+```elm
+Random.generate : (a -> msg) -> Generator a -> Cmd msg
+```
+
+This function will take a function that returns a message and then a generator like from our `randomPhotoPicker` function. We will make an example type in order to make a `Cmd msg` type. 
+
+```elm
+type Msg = RandomMsg Int
+```
+
+Since we are getting a random Int type, we need the `RandomMsg` to have an Int with it which will be the random value that we get back from the elm runtime. Thus, to make the Cmd we can do the following. Remember that the type for `RandomMsg` is actually a function of type `Int -> Msg`
+
+```elm
+exampleCmd = Random.generate (RandomMsg) randomPhotoPicker
+```
+
+Another cool function that we can use is the `Random.weighted` function. This function will actually weight out different possiblities differently, so in effect you could make cool function that could model something as amazing as loaded dice. But before we write that tasty function, we should probably get back to the building blocks for programming which are the basics, and there is nothing more basic than a `Bool`. 
+
+But first the type signature of `Random.weigthed`.
+
+```elm
+Random.weighted : ( Float, a ) -> List ( Float, a ) -> Generator a
+```
+
+```elm
+myRandomBool : Random.Generator Bool
+myRandomBool = 
+    Random.weighted (80, True) [(20, False)]
+```
+
+*Quick Elm Repl*
+```elm
+> myRandom 2 myRandomBool                                                    
+True : Bool
+```
+
+Let's actually make a random event for a loaded dice. The cool thing is that you can give all your numbers whatever weights you want, and they are floats too. I am just going to give all the sides completely 'random' weights as an example.
+
+```elm
+loadedDice = 
+    Random.weighted (10, 1) [(2, 2), (3,3), (10, 4), (30, 5), (100, 6)]
+```
+
+The last function in this article is another very useful function which is the `Random.uniform` function. The signatures is as follows. 
+
+```elm
+Random.uniform : : a -> List a -> Random.Generator a
+```
+
+The random uniform takes a list of elements and makes a uniform distribution over these elements so that they all have equal probability of being chosen. The function takes the first element of the list and then tail of the list. Here is an example function using the `Maybe` type because the list might be empty. 
+
+```elm
+uniform : Int -> List a -> Maybe ( a, Random.Seed )
+uniform seed hs = 
+        case hs of 
+        [] -> Nothing 
+        (l::ls) -> Just (myRandom seed (Random.uniform l ls))
+```
 
 
 
