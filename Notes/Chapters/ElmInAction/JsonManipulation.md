@@ -158,10 +158,54 @@ photoDecoder =
 
 Testing it out yields the following
 ```elm
-threeFieldJson = """{ "url": "www.manning.com",
-  "size": 3,
-  "title": "Elm-in-action"}"""
+threeFieldJson = """{ "url": "www.manning.com","size": 3,"title": "Elm-in-action"}"""
 photoDecoded = Json.Decode.decodeString photoDecoder threeFieldJson
 ```
+
+```elm
+> photoDecoded = Json.Decode.decodeString photoDecoder threeFieldJson
+Ok { size = 3, title = "Elm-in-action", url = "www.manning.com" }
+    : Result Json.Decode.Error { size : Int, title : String, url : String }
+```
+
+Now, let's try with the new way using the function `succeed`, `required`, and `optional` functions. The `succedd` type is as follows. 
+
+```elm
+> Json.Decode.succeed
+<function> : a -> Json.Decode.Decoder a
+```
+
+We see that it takes some type variable and turns the type variable into a decoder. Now let's make a type alias for some type of Json we might get back from a server. 
+
+```elm
+type alias CustomerInfo = 
+    { name : String
+    , city : String
+    , age : Int
+    , social : Int
+    }
+```
+
+Now let's use the succeed function on this type class to see the type we get back. 
+
+
+```elm
+> Json.Decode.succeed CustomerInfo
+<internals>
+    : Json.Decode.Decoder (String -> String -> Int -> Int -> CustomerInfo)
+```
+
+We see that we get a decoder of a function which is sort of useless. What we want is the type `Json.Decode.Decoder CustomerInfo`.Actually, the succeed function is a quite confusing because what it is really doing is almost ignoring the Json string and giving you back it's value. This is probably easier to explain with an example
+
+```elm
+>Json.Decode.decodeString (Json.Decode.succeed 42) "[1,2,3]"
+Ok 42 : Result Json.Decode.Error number
+> Json.Decode.decodeString (Json.Decode.succeed 42) "true"   
+Ok 42 : Result Json.Decode.Error number
+> Json.Decode.decodeString (Json.Decode.succeed 42) "hello"  
+Err (Failure ("This is not valid JSON! Unexpected token h in JSON at position 0") <internals>)
+```
+
+If you want a good article that explains the succeed function well check out [this](https://korban.net/posts/elm/2018-07-10-how-json-decode-pipeline-chaining-works/) article. What the succeed is doing here is saying that given valid JSON data as a string, I will return the number 42. 
 
 
