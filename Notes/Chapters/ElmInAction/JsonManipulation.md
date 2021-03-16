@@ -7,7 +7,7 @@ date: 2021-02-23
 author: Nathan Swindall
 ---
 
-## **JSON Manipulation**
+## **Decoding JSON**
 
 This tutorial will be on decoding different strings into javaScript types. For example, like turning a string into a list, or a string into an object in JavaScript. This is important because often times you will get a JSON string that you need to turn into an object or some other type in order to use the data in your app. The simplest place to start is with primitives. 
 
@@ -168,7 +168,7 @@ Ok { size = 3, title = "Elm-in-action", url = "www.manning.com" }
     : Result Json.Decode.Error { size : Int, title : String, url : String }
 ```
 
-Now, let's try with the new way using the function `succeed`, `required`, and `optional` functions. The `succedd` type is as follows. 
+Now, let's try with the new way using the function `succeed`, `required`, and `optional` functions. The `succeed` type is as follows. 
 
 ```elm
 > Json.Decode.succeed
@@ -206,6 +206,73 @@ Ok 42 : Result Json.Decode.Error number
 Err (Failure ("This is not valid JSON! Unexpected token h in JSON at position 0") <internals>)
 ```
 
-If you want a good article that explains the succeed function well check out [this](https://korban.net/posts/elm/2018-07-10-how-json-decode-pipeline-chaining-works/) article. What the succeed is doing here is saying that given valid JSON data as a string, I will return the number 42. 
+If you want a good article that explains the succeed function check out [this](https://korban.net/posts/elm/2018-07-10-how-json-decode-pipeline-chaining-works/) article. What the succeed is doing here is saying that given valid JSON data as a string, I will return the number 42. 
 
 
+This will probably make more sense if we see the optional and required functions. I removed the `Json.Decode` part for brevity. 
+```elm
+required : String -> Decoder a -> Decoder (a -> b) -> Decoder b
+optional : String -> Decoder a -> a -> Decoder (a -> b) -> Decoder b
+```
+
+These are the two different type signatures for the `required` and `optional` functions. You can see that they first take the name of the field, then the Decoder for that field (ie `Json.Decode.string`) and then a decoder with a function from our decoder to another decoder, and then finally the new decoder. The optional takes an optional argument just in case there is no value when decoding.
+
+So let's say we have the following JSON file to decode
+
+```json
+{
+    "name": "Nathan",
+    "age": 29
+}
+```
+create a type alias to make it easier to decode
+```elm
+type alias Person = 
+    { name: String
+      age: Int
+    }
+```
+
+We would make the decoder for this file as follows
+
+```elm
+personDecoder: Json.Decode.Decoder Person
+personDecoder = 
+    Json.Decode.succeed Person
+        |> Json.Decode.Pipeline.required "name" Json.Decode.string
+        |> Json.Decode.Pipeline.optional "age" Json.Decode.int 29
+```
+
+So let's go through this example on line at a time.
+
+```elm
+> Json.Decode.succeed Person
+<internals> : Json.Decode.Decoder (String -> Int -> Person)
+```
+
+```elm
+Json.Decode.Pipeline.required "name" Json.Decode.string
+<function>
+    : Json.Decode.Decoder (String -> b) -> Json.Decode.Decoder b
+```
+
+```elm 
+Json.Decode.Pipeline.optional "age" Json.Decode.int 29
+<function> : Json.Decode.Decoder (Int -> b) -> Json.Decode.Decoder b
+```
+
+The first function Json.Decode.Succeed Person uses the pipe function to be the argument for the first require function. Thus, we need to match `Json.Decode.Decoder (String -> Int -> Person)` to `Json.Decode.Decoder (String -> b)`. 
+
+```elm
+Json.Decode.Decoder (String -> Int -> Person)
+Json.Decode.Decoder (String -> b)
+```
+
+We see that the variable b must be `Int -> Person`. Thus the required function produces a type of `Json.Decode.Decoder (Int -> Person)`. The next function is the optional function. We need to match the argument from required `Json.Decode.Decoder (Int -> Person)` with `Json.Decode.Decoder (Int -> b)`.
+
+```elm
+Json.Decode.Decoder (Int -> Person)
+Json.Decode.Decoder (Int -> b)
+```
+
+We see that b in this case is Person. Thus, the final output of the pipeline is the type `Json.Decode.Decoder Person` which was what our type signature said. 

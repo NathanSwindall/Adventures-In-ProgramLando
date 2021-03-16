@@ -23,7 +23,7 @@ author: Nathan Swindall
 ### **Notes for Elm In Action**
 
 {% assign JSONurl = "Notes/Chapters/ElmInAction/JsonManipulation" | relative_url %} 
-<a href="{{JSONurl}}">JSON Manipulation</a>
+<a href="{{JSONurl}}">Decoding JSON</a>
 {% assign JSONurl = "Notes/Chapters/ElmInAction/GodCompiler" | relative_url %} 
 <a href="{{JSONurl}}">God Compiler</a>
 {% assign JSONurl = "Notes/Chapters/ElmInAction/TestingCmds" | relative_url %} 
