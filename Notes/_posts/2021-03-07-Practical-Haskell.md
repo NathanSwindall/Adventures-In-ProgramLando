@@ -35,3 +35,9 @@ Experienced programmers who may be new to the Haskell programming language. Howe
 <a href="{{Chapter2}}">Time Machine</a>
 {% assign Chapter2 = "Notes/Chapters/PracticalHaskell/stackProject" | relative_url %} 
 <a href="{{Chapter2}}">Haskell Stack Project</a>
+
+**Chapter 4**
+{% assign Chapter2 = "Notes/Chapters/PracticalHaskell/classes" | relative_url %} 
+<a href="{{Chapter2}}">Haskell Classes</a>
+{% assign Chapter2 = "Notes/Chapters/PracticalHaskell/Haskell_ghc_extensions" | relative_url %} 
+<a href="{{Chapter2}}">Haskell ghc extensions</a>
