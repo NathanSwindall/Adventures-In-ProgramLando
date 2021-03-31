@@ -41,3 +41,8 @@ Experienced programmers who may be new to the Haskell programming language. Howe
 <a href="{{Chapter2}}">Haskell Classes</a>
 {% assign Chapter2 = "Notes/Chapters/PracticalHaskell/Haskell_ghc_extensions" | relative_url %} 
 <a href="{{Chapter2}}">Haskell ghc extensions</a>
+
+
+**Chapter 6**
+{% assign Chapter2 = "Notes/Chapters/PracticalHaskell/kmeansclustering" | relative_url %} 
+<a href="{{Chapter2}}">K-Means Clustering</a>
