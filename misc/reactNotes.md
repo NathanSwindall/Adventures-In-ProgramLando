@@ -6,9 +6,9 @@ https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_
 ```css
 .card-list {
   width: 85vw;
-  margin: 0 auto
-  display: grid
+  margin: 0 auto;
+  display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-gap: 20px
+  grid-gap: 20px;
 }
 ```
