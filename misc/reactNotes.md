@@ -1,6 +1,4 @@
-This is a website for understanding the 
 
-https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout
 
 
 ```css
@@ -12,3 +10,5 @@ https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_
   grid-gap: 20px;
 }
 ```
+
+This css code above uses the grid display. More information on the grid display can be found at (this)[https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout] link.
