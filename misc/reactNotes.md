@@ -17,10 +17,10 @@ This css code above uses the grid display. More information on the grid display 
 ```css
 
 .card-container {
-  /* You don't really need this right now */
+  /* You will use this for having the picture, name, and email in column */
   display: flex;
   /* flex-direction makes it into a column */
-  flex-direction: row;
+  flex-direction: column;
   background-color: #95dada;
   border: 1px solid grey;
   /* border radius is for curving the edges */
