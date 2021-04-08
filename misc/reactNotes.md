@@ -17,22 +17,40 @@ This css code above uses the grid display. More information on the grid display 
 ```css
 
 .card-container {
+  /* You don't really need this right now */
   display: flex;
-  flex-direction: column;
+  /* flex-direction makes it into a column */
+  flex-direction: row;
   background-color: #95dada;
   border: 1px solid grey;
+  /* border radius is for curving the edges */
   border-radius: 5px;
+  /* padding is for creating betting inside the block */
   padding: 25px;
+  /* makes the cursor a pointer when over the block */
   cursor: pointer;
+  /* This is for font smoothing in mozilla and oxs
+  It doesn't really do anything special */
   -moz-osx-font-smoothing: grayscale;
-  backface-visibility: hidden;
+  /* This will show the back face, but we don't really need 
+  the back face */
+  backface-visibility: hiddne;
+  /* The translateZ() CSS function repositions an element along 
+  the z-axis in 3D space, i.e., closer to or farther away from the viewer.
+   Its result is a <transform-function> data type. */
+  /* It doesn't really do anything here */
   transform: translateZ(0);
+  /* This will makes the transform slower */
   transition: transform 0.25s ease-out;
 }
 
 .card-container:hover {
   transform: scale(1.05);
 }
+
+/* -moz-osx-font-smoothing: grayscale; is for text smoothing but it doesn't
+really make a difference */
+
 
 ```
 
