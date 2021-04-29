@@ -29,3 +29,9 @@ func _physics_process(delta): # used for physics enginer
 		motion.x = 0
 	move_and_slide(motion) # takes a vector2 object
 ```
+
+
+I noticed that you can edit the script of all bunnies, but I think you can edit the script also for an individual instance
+
+You can also attach multiple scripts to a bunny which is pretty cool. 
+We can actually mess witht eh up direction maybe and make a Vector2(0,1) so that down is up
