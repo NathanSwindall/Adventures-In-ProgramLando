@@ -2,9 +2,9 @@
 layout: post
 category: tech
 title: Elm App
-image: /assets/images/favicons.jpg
+image: /assets/images/elm.png
 frontpage: frontpage
-summary: Just plain frustrating sometimes
+summary: A simple app using the Elm framework
 date: 2021-02-22
 author: Nathan Swindall
 ---
@@ -18,3 +18,5 @@ For an programming test that I was given for a project a while ago, I had to mak
 
 {% assign ElmApp = "blog-tech/ElmTodoApp/index" | relative_url %} 
 <a href="{{ElmApp}}">Elm Todo App</a>
+
+There is unfortunately a glaring error to this app. A fun game if you are a tester is to find out where the error is. 

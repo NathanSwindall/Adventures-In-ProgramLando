@@ -362,57 +362,271 @@ public Startup(IConfiguration config)
     }
 ```
 
-I did run into quite a lot of trouble with my visual studio code marking things as red or "False Errors". I ended up having to install different packages sometimes and restarting my visual code also helped. When in doubt, always restart your visual studio code. I have some plugins that are probably screwing up things a bit, so make sure that you turn off plugins that might be screwing with things. 
+I did run into quite a lot of trouble with my visual studio code marking things as red or "False Errors". I ended up having to install different packages sometimes and restarting my visual code also helped. When in doubt, always restart your visual studio code. I have some plugins that are probably screwing up things a bit, so make sure that you turn off plugins that might be screwing with things. Alss there is another setting we want to change in the C# extensions which is the 'this' setting. To do this we are going to go to options again and change the Ctor assignment which is just unchecking the "Use This For Ctor Assignments part which will get rid of the this key. 
 
+Lastly, for this section we need to go change the connection strings so that it connects to the sqlite database. We can add this following to our app settings below. I am curious if you can change the "DefaultConnection" part to something else, or if you can change the name of the database to something else instead of reactivities.db. 
 
-
-
-
-
-base(options) is passing the options to the derived class so the passing it to the DbContext constructor. 
-DbSet<Activity> Activities. This Activities part will be the name of our table will columns that will match the names of our class. 
-We want an Id so that we know which part is the primary key
-Go to startup file and add a service to our dependency container 
-
-services.AddDbContext<DataContext>(opt => 
-{
-    opt.UseSqlite(_config.GetConnectionString("DefaultConnection"))
-}
-)
-
-Now we will also change the configuration in the setup part. 
-private readonly IConfiguration _config 
-
-public Startup(Iconfiguration config)
-{
-    _config = config;
-}
-
-In the settings go to the private part and set Csharpextensions: Private MemberPrefix as `-`. 
-remove this setting 
-Go to Csharpextensions. Use This for Ctor Assignments. Don't mark this. 
-
-We need to add our defaultString that will be used by the SqlLite. We add it to the app settings. 
+```json
 "ConnectionStrings": {
     "DefaultConnection": "Data source=reactivities.db"
 }
+```
 
 
 ## Creating an Entity Framework code first migration
 
-So the migration will make a table in our database called Activities with the properties from the Activity class. 
-Make sure to stop your server. 
-cd Reactivities 
-use the command dotnet tool list --global
-This will make sure you have the dotnet-ef tool. 
-If not installed go to nuget.org/packages/dotnet-ef/
-dotnet tool install --global dotnet-ef --version <your version>
-if already installed 
-dotnet tool install --global dotnet-ef --version <your version>
-dotnet ef migrations add InitialCreate -p Persistence -s API
--p is where the DbContext is 
--s is where the starter project is
-We will probably get an error. 
-We will need to reference Microsoft.EntityFrameworkCore.Design. 
-We will need it in our API project. 
-Look at the migration file. The first one. 
+There is some magic going on in this section. We are going to add a migration of the data we want to our database. A migration seems to be just adding a table to our database with the properties that were specified in our domain file. So `Activity.cs` has what are columns we want to be in our file and then `DataContext.cs` actually contains what we want our table to be called with these columns which is `Activities`. To start, make sure you server isn't running. You will get a vague error if you have your server running while trying to do a migration. Make sure you are in the Reactivities folder so cd up if you are still in the API folder. 
+
+We are going to need the dotnet tools to make a migration. You can check if you have the tools installed by running the `dotnet tool list --global`. You need to make sure you have the `dotnet-ef` installed. If you don't then you can go to the `nuget.org/packages/dotnet-ef/` to get this package. Then you will run the following command based on your version `dotnet tool install --global dotnet-ef --version <your version>`.
+Now to run the migration you will run a migration command. The command is `dotnet ef migrations add InitialCreate -p Persistence -s API`. "-p" is where the DbContext is and "-s" is where the starter project is. You will probably get an error the first time you run it because you will need another package in your references for the API project which is `Microsoft.EntityFrameworkCore.Design`. Install this and then run the command again. 
+
+When I was running the command, I kept running into a problem. The error I kept getting back was :
+
+```
+It was not possible to find any compatible framework version
+The framework 'Microsoft.NETCore.App', version '2.0.0' (x64) was not found.
+```
+I searched quite a bit for what was causing this error and found out that I had been entering the about command wrong. I kept entering `dotnet ef migrations add InitialCreate -p Persistence - s API` instead of `dotnet ef migrations add InitialCreate -p Persistence -s API`. That space between the '- s' caused this problem, so if you ever get this error, always make sure your commands are well typed. We get a few files once we run the migration. You can also use one of the options to specify which framework to use too. I am not sure if this will work but always know your commands. `The migration is where the DbContect, so this is where the files will show up. You will get a file called `initialCreate.cs`. This is where we have the C# code that converts to sql commands to make a table. It looks something like this: 
+
+```csharp
+namespace Persistence.Migrations
+{
+    public partial class InitialCreate : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: "Activities",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Title = table.Column<string>(type: "TEXT", nullable: false),
+                    Date = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: false),
+                    Category = table.Column<string>(type: "TEXT", nullable: false),
+                    City = table.Column<string>(type: "TEXT", nullable: false),
+                    Venue = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Activities", x => x.Id);
+                });
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "Activities");
+        }
+    }
+}
+```
+
+Notice that we have a function called Down that will drop the table, and a constraint that make the primary key for our table which is the id. The two other files are just snapshots of our database migrations, and we can actually use these snapshots to go back to another migration if we mess up our migrations. 
+
+
+## Creating the database
+When we start up our program, we want to be create our database with the table in it too. We are using SQLite so this makes sense to do. We will change the Main method in program.cs in order to do this. The code below is how we will change it. 
+
+The using keyword is a special keyword that will make it so that anything stored in the variable that is after it will be deposed of after the method is over. It is a little confusing, but maybe it will make sense later. I don't see why we need to dispose of the services we are bringing into the method. It's kind of making it a local variable that gets deleted. This seems to be useful for when you are using a try/catch block because the using keyword is sort of like a finally statement that uses the dispose method to dispose of the object created. It helps with resource management. 
+
+```csharp
+public static void Main(string[] args)
+{
+    var host = CreateHostBuilder(args).Build(); // originally this had run on it
+
+    using var scope = host.Services.CreateScope();
+
+    var services = scope.ServiceProvider;
+
+    try{
+        var context = services.GetRequiredService<DataContext>();
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        // We are getting the Ilogger service which takes a type where we are logging from. 
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred during migration");
+    }
+
+    host.Run(); // We must make sure to run our host or the program won't even start
+}
+```
+
+We can now run the program with this code. We will change our directory to the API folder and not run the command `dotnet watch run`. We will see certain logging statements, but we also want to be able to see the SQL database that we are creating.
+
+here are the logging statements we will get:
+```csharp
+Executed DbCommand (17ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE "__EFMigrationsHistory" (
+          "MigrationId" TEXT NOT NULL CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY,
+          "ProductVersion" TEXT NOT NULL
+      );
+```
+
+```csharp
+CREATE TABLE "Activities" (
+          "Id" TEXT NOT NULL CONSTRAINT "PK_Activities" PRIMARY KEY,
+          "Title" TEXT NOT NULL,
+          "Date" TEXT NOT NULL,
+          "Description" TEXT NOT NULL,
+          "Category" TEXT NOT NULL,
+          "City" TEXT NOT NULL,
+          "Venue" TEXT NOT NULL
+      );
+```
+In order to see the database, we will need a plugin called SQLite by alexcvv. This of course is only if you are using visual studio code. Once we have this plugin, we can then use the command in visual studio code `SQLite: Open Database` by pressing `ctrl + shift + p` if you are using a PC. The SqlLite extensions will allow us to look into our sqlite database if we want to. We can do this by using the command `SqlLite: open database` and then going to our Activities table and right clicking on it to show table. 
+
+
+## Seeding our database (Creating our data Yay!!)
+
+So in this section we are going to actually start our database off with some data from the beginning. We are once again going to do this is in the main method in the program.cs file that we did before. In the persistence folder we are going to create a new class called Seed.cs. 
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Domain;
+
+namespace Persistence
+{
+    public class Seed
+    {
+        public static async Task SeedData(DataContext context)
+        {
+            if (context.Activities.Any()) return; // if there is data already, jusr return
+            
+            var activities = new List<Activity>
+            {
+                new Activity
+                {
+                    Title = "Past Activity 1",
+                    Date = DateTime.Now.AddMonths(-2),
+                    Description = "Activity 2 months ago",
+                    Category = "drinks",
+                    City = "London",
+                    Venue = "Pub",
+                },
+                new Activity
+                {
+                    Title = "Past Activity 2",
+                    Date = DateTime.Now.AddMonths(-1),
+                    Description = "Activity 1 month ago",
+                    Category = "culture",
+                    City = "Paris",
+                    Venue = "Louvre",
+                },
+                new Activity
+                {
+                    Title = "Future Activity 1",
+                    Date = DateTime.Now.AddMonths(1),
+                    Description = "Activity 1 month in future",
+                    Category = "culture",
+                    City = "London",
+                    Venue = "Natural History Museum",
+                },
+                new Activity
+                {
+                    Title = "Future Activity 2",
+                    Date = DateTime.Now.AddMonths(2),
+                    Description = "Activity 2 months in future",
+                    Category = "music",
+                    City = "London",
+                    Venue = "O2 Arena",
+                },
+                new Activity
+                {
+                    Title = "Future Activity 3",
+                    Date = DateTime.Now.AddMonths(3),
+                    Description = "Activity 3 months in future",
+                    Category = "drinks",
+                    City = "London",
+                    Venue = "Another pub",
+                },
+                new Activity
+                {
+                    Title = "Future Activity 4",
+                    Date = DateTime.Now.AddMonths(4),
+                    Description = "Activity 4 months in future",
+                    Category = "drinks",
+                    City = "London",
+                    Venue = "Yet another pub",
+                },
+                new Activity
+                {
+                    Title = "Future Activity 5",
+                    Date = DateTime.Now.AddMonths(5),
+                    Description = "Activity 5 months in future",
+                    Category = "drinks",
+                    City = "London",
+                    Venue = "Just another pub",
+                },
+                new Activity
+                {
+                    Title = "Future Activity 6",
+                    Date = DateTime.Now.AddMonths(6),
+                    Description = "Activity 6 months in future",
+                    Category = "music",
+                    City = "London",
+                    Venue = "Roundhouse Camden",
+                },
+                new Activity
+                {
+                    Title = "Future Activity 7",
+                    Date = DateTime.Now.AddMonths(7),
+                    Description = "Activity 2 months ago",
+                    Category = "travel",
+                    City = "London",
+                    Venue = "Somewhere on the Thames",
+                },
+                new Activity
+                {
+                    Title = "Future Activity 8",
+                    Date = DateTime.Now.AddMonths(8),
+                    Description = "Activity 8 months in future",
+                    Category = "film",
+                    City = "London",
+                    Venue = "Cinema",
+                }
+            };
+
+            // we are going to add these range of activities to the database. Like staging them for git
+            await context.Activities.AddRangeAsync(activities);
+
+            // Query to actually save the files to the database. 
+            await context.SaveChangesAsync();
+        }
+    }
+}
+```
+
+Since the file is going to be quite a lot to type out, I have included it here and it is from the course directly where I am getting this information. The `await context.Activities.AddRangeAsync(activities)` is actually similar to staging the files we want to add to the database. The `context.SaveChangesAsync()` method is where we are actually saving it to the database. We need to change the main method in the program.cs file now to seed are data into the database. Notice that the method is async, thus we should change our Main method to be async. 
+
+```csharp
+public static async Task Main(string[] args)
+{
+    var host = CreateHostBuilder(args).Build(); 
+
+    using var scope = host.Services.CreateScope();
+
+    var services = scope.ServiceProvider;
+
+    try{
+        var context = services.GetRequiredService<DataContext>();
+        context.Database.MigrateAsync();
+        await Seed.SeedData(context);
+    }
+    catch (Exception ex)
+    {
+        // We are getting the Ilogger service which takes a type where we are logging from. 
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred during migration");
+    }
+
+    host.RunAsync(); // We must make sure to run our host or the program won't even start
+}
+```
+
+We have changed a few things here to have async method. We changed the Migrate function to a MigrateAsync, and then we changed the host.Run() to a host.RunAsync(). We don't really need to do all this because the main function is only run once. Now it is time to run our code, and we can see that the we have a lot more output in our console when we run it.  

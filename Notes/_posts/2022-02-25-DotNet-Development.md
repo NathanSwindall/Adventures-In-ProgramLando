@@ -13,6 +13,6 @@ At my current job, I am using Vue.js with ASP.Net Core, but I haven't used ASP.N
 
 ### **Notes for ASP.Net**
 {% assign Slots = "Notes/Chapters/ASP/API_Skeleton" | relative_url %} 
-<a href="{{Slots}}">API Skeleton</a>
+&rarr; <strong><a href="{{Slots}}"> API Skeleton</a></strong>
 <!-- I noticed when I have .md it ruins the file -->
 
