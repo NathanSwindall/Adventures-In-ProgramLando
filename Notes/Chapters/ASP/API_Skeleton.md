@@ -629,4 +629,160 @@ public static async Task Main(string[] args)
 }
 ```
 
-We have changed a few things here to have async method. We changed the Migrate function to a MigrateAsync, and then we changed the host.Run() to a host.RunAsync(). We don't really need to do all this because the main function is only run once. Now it is time to run our code, and we can see that the we have a lot more output in our console when we run it.  
+We have changed a few things here to have async method. We changed the Migrate function to a MigrateAsync, and then we changed the `host.Run()` to a `host.RunAsync()`. We don't really need to do all this because the main function is only run once. Now it is time to run our code, and we can see that the we have a lot more output in our console when we run it.  This code actually cause our server to terminate unfortunately. We have to make sure that we await all the async calls. We won't get an error when we start up our server, but it will just stop working. You will actually get an important warning message which is: 
+
+```\C#\Reactivities\API\Program.cs(26,17): warning CS4014: Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' ```
+
+To solve this problem. Make sure you await all async calls. Here is the updated version. 
+
+```csharp
+    public static async Task Main(string[] args)
+    {
+        var host = CreateHostBuilder(args).Build(); 
+
+        using var scope = host.Services.CreateScope();
+
+        var services = scope.ServiceProvider;
+
+        try{
+            var context = services.GetRequiredService<DataContext>();
+            await context.Database.MigrateAsync();
+            await Seed.SeedData(context);
+        }
+        catch (Exception ex)
+        {
+            // We are getting the Ilogger service which takes a type where we are logging from. 
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "An error occurred during migration");
+        }
+
+        await host.RunAsync(); // We must make sure to run our host or the program won't even start
+    }
+```
+
+## Adding an API controller 
+
+make a new class and derive from controllerBase class 
+add [ApiController]
+'[Route("[controller]")]'
+The route of the api controller will be the route minus controller part
+create a new controller called the activiteis contorller :  BaseApiController 
+quikfix constructor
+We are creating a simple get method and are not worrying about errors right now. 
+
+The first thing we are going to do is add a base controller. So instead on deriving from `ControllerBase` for all of our endpoints we will have a base controller which will eliminate so of our boiler plate code. The original example endpoint that they had is as follows: 
+
+```csharp
+using Microsoft.AspNetCore.Mvc;
+
+namespace API.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class WeatherForecastController : ControllerBase
+{
+    private static readonly string[] Summaries = new[]
+    {
+        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+    };
+
+    private readonly ILogger<WeatherForecastController> _logger;
+
+    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    {
+        _logger = logger;
+    }
+
+    [HttpGet(Name = "GetWeatherForecast")]
+    public IEnumerable<WeatherForecast> Get()
+    {
+        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        {
+            Date = DateTime.Now.AddDays(index),
+            TemperatureC = Random.Shared.Next(-20, 55),
+            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+        })
+        .ToArray();
+    }
+}
+
+```
+
+Notice in this example that they have the `WeatherForecastController : ControllerBase` part. The new base controller that we will make will look like the following: 
+
+```csharp
+using Microsoft.AspNetCore.Mvc;
+
+namespace API.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")] //api/activities
+    public class BaseController: ControllerBase
+    {
+        
+    }
+}
+```
+
+Remember that the `[controller]` will be replace by the controller part. So, if we kept the WeatherForecastController part, and derived it from the BaseController, the endpoint would look like `api/weatherforecast` without the controller. [Exercise] I wonder if I could name my endpoints something else like `[endpoint]` if it would work the same way. So now, let's create our first endpoint for the test data that we had. Let's start with a brand new file and then derive from our base controller. There are few things we are going to do that will not be in the final product. We are going to directly interface with the `DataContext` file. For example, we are going to create a constructor that takes in as an argument the DataContext field and then create a readonly variable. Visual studio code automatically does this for which is cool. We are using a service to do dependency injection into our new controller class.  
+
+```csharp
+using Persistence;
+
+namespace API.Controllers
+{
+    public class ActivitiesController : BaseController
+    {
+        private readonly DataContext _context;
+        public ActivitiesController(DataContext context)
+        {
+            _context = context;
+
+        }
+    }
+}
+```
+
+Now we are ready to add some simple endpoints to our controller. We are going to add two different endpoints and then test them out in PostMan. The first endpoint will just a simple getter request for the list of activities and the second will be a simple getter for a specific activity by ID. We will not worry about catching errors right now, so that is not important. 
+
+```csharp
+using Domain;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Persistence;
+
+namespace API.Controllers
+{
+    public class ActivitiesController : BaseController
+    {
+        private readonly DataContext _context;
+        public ActivitiesController(DataContext context)
+        {
+            _context = context;
+
+        }
+
+        [HttpGet] // api/Activities
+        public async Task<ActionResult<List<Activity>>> GetActivities()
+        {
+            return await _context.Activities.ToListAsync();
+        }
+
+        [HttpGet("{id}")] //api/Activities/{id}
+        public async Task<ActionResult<Activity>> GetActivity()
+        {
+            return await _context.Activities.FindAsync();
+        }
+    }
+}
+```
+
+We have created two new endpoints for this controller. Notice how one takes and id in the endpoint. This is how your write a GET request using this framework. You write it with the attributes above and you can add certain things to them to change the endpoints. This is really exciting to create and transfer data in this way. I don't know about you, but transferring different data through endpoints to something is really cool. You also want to restart your server in order to for the endpoints to work. Sometimes, when make calls to the API, they won't work unless you restart your server. When using postamn, you can actually create variables for your requests to use. So a request might look like ```{{url}}/api/activities/d89a8275-2dcb-441e-91fa-3544a572495f```. The ```{{url}}``` is a variable you can set in postman. Just go to the edit collection part to set variables and make sure to save. Or you can just type in this url and right click to set it that way. The endpoints that we will be hitting are as follows: 
+
+`{{url}}/api/activities/`
+
+and 
+
+`{{url}}/api/activities/{id}`
+
+Notice how they both use Activities. The Activities part comes from the controller. 
