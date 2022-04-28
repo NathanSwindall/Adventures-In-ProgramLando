@@ -785,4 +785,22 @@ and
 
 `{{url}}/api/activities/{id}`
 
-Notice how they both use Activities. The Activities part comes from the controller. 
+Notice how they both use Activities. The Activities part comes from the controller. I was having trouble getting the id one to work. I would get the activities and then take the id from one of them to use in the other endpoint and for some reasons it wasn't working for awhile, but finally one of the ids worked. 
+
+## Saving changes into source control
+
+Be in Reactivities
+git status 
+git init 
+dotnet new -l
+we have a gitignore template 
+dotnet gitignore file
+later in the course we will put confidential stuff in the appsettings.json file thus we will want to ignore this file and put it in our gitignore. 
+
+## Final thoughts
+Using other databases
+Using Visual Studio code
+Using other data and doing other migrations 
+Why use multiple projects. Helps with clean architecture. It makes it so that we have to choose what accesses what. We could hav used a single project. 
+Creating the front-end in Elm, Vue, and React.js
+

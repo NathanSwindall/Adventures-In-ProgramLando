@@ -1,14 +1,14 @@
 ---
 layout: post
-category: notes
-title: Notes for DotNet Development
-image: Notes/assets/images/dotnet.png
-summary: Notes for DotNet Development
-date: 2022-02-24
+category: tech
+title: Tutorial for creating a dotnet app
+image: /Notes/assets/images/dotnet.png
+frontpage: frontpage
+date: 2022-04-28
 author: Nathan Swindall
 ---
 
-At my current job, I am using Vue.js with ASP.Net Core, but I haven't used ASP.Net Core in a long time and decided to go through a course to get my skills up to par again. This will be a section that will include quite a few notes on how to run an API with a frontend. The frontend will be React.js even though I am very familiar with Vue.js. 
+At my current job, I am using Vue.js with ASP.Net Core, but I haven't used ASP.Net Core in a long time and decided to go through a course to get my skills up to par again. This will be a section that will include quite a few notes on how to run an API with a frontend. The frontend will be React.js even though I am very familiar with Vue.js. I might add a tutorial for other frameworks in here too like Vue.js and Elm and build them concurrently. 
 
 
 ### **Notes for ASP.Net**
