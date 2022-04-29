@@ -309,7 +309,7 @@ namespace Domain
 
 ## Adding an Entity Framework Db Context
 
-First, we need to install some packages. We are going to be using sqlite for a bit so we need to install the correct packages to help us do this. If you have windows and visual studio code you can press `ctrl-shift-p` in order to pull up nuget gallery. Once you pull up this you will install `Microsoft.EntityFrameworkCore.Sqlite`. This is a SQLite database provider for Entity Framework Core. What we are really doing is seting up an Object Relational Mapper. This will make it so that we can write SQL statements and deal with our database in purely C# code. So we don't have to worry about being in expert in SQL. Will will install this package in the Persistence folder. Make sure to select the same version as your run time. You can check your version of dotnet by typing `dotnet --version`. Once will install we should see a new reference to the package in `Persistence.csproj`. 
+First, we need to install some packages. We are going to be using sqlite for a bit so we need to install the correct packages to help us do this. If you have windows and visual studio code you can press `ctrl-shift-p` in order to pull up nuget gallery. Once you pull up this you will install `Microsoft.EntityFrameworkCore.Sqlite`. This is a SQLite database provider for Entity Framework Core. What we are really doing is setting up an Object Relational Mapper. This will make it so that we can write SQL statements and deal with our database in purely C# code. So we don't have to worry about being in expert in SQL. Will will install this package in the Persistence folder. Make sure to select the same version as your run time. You can check your version of dotnet by typing `dotnet --version`. Once will install we should see a new reference to the package in `Persistence.csproj`. 
 
 You can delete the `Class1` file in the Persistence folder and now make a new file called `DataContext`. We are going to derive from the class DbContext which is part of the EntityFrameworkCore package that we just installed. Some interesting database patterns to look into that are used in the course are the Unit of Work Pattern and the Repository Pattern. Maybe it would be a good option to look them up in the future. 
 
@@ -382,11 +382,11 @@ Now to run the migration you will run a migration command. The command is `dotne
 
 When I was running the command, I kept running into a problem. The error I kept getting back was :
 
+```python
+#It was not possible to find any compatible framework version
+#The framework 'Microsoft.NETCore.App', version '2.0.0' (x64) was not found.
 ```
-It was not possible to find any compatible framework version
-The framework 'Microsoft.NETCore.App', version '2.0.0' (x64) was not found.
-```
-I searched quite a bit for what was causing this error and found out that I had been entering the about command wrong. I kept entering `dotnet ef migrations add InitialCreate -p Persistence - s API` instead of `dotnet ef migrations add InitialCreate -p Persistence -s API`. That space between the '- s' caused this problem, so if you ever get this error, always make sure your commands are well typed. We get a few files once we run the migration. You can also use one of the options to specify which framework to use too. I am not sure if this will work but always know your commands. `The migration is where the DbContect, so this is where the files will show up. You will get a file called `initialCreate.cs`. This is where we have the C# code that converts to sql commands to make a table. It looks something like this: 
+I searched quite a bit for what was causing this error and found out that I had been entering the about command wrong. I kept entering `dotnet ef migrations add InitialCreate -p Persistence - s API` instead of `dotnet ef migrations add InitialCreate -p Persistence -s API`. That space between the '- s' caused this problem, so if you ever get this error, always make sure your commands are well typed. We get a few files once we run the migration. You can also use one of the options to specify which framework to use too. I am not sure if this will work but always know your commands. `The migration is where the DbContext, so this is where the files will show up. You will get a file called `initialCreate.cs`. This is where we have the C# code that converts to sql commands to make a table. It looks something like this: 
 
 ```csharp
 namespace Persistence.Migrations
@@ -789,18 +789,285 @@ Notice how they both use Activities. The Activities part comes from the controll
 
 ## Saving changes into source control
 
-Be in Reactivities
-git status 
-git init 
-dotnet new -l
-we have a gitignore template 
-dotnet gitignore file
-later in the course we will put confidential stuff in the appsettings.json file thus we will want to ignore this file and put it in our gitignore. 
+Now we are going to setup source control for our project. If you don't already have a github account, go ahead and create one because we will use github for source control. Source control will allow you to go back to older versions of your code if your app stops working. The first command we will use is `git status` to see if we already have a git initialized. I don't expect you to have it already, but it is always, people do forget things. The next thing to do is to initialize git in your project. Make sure you are in the Reactivities folder and not in the API folder. The command is `git init`. There are many files in our project that we don't want to save because they are auto-generated, so it would just take up space. In order to ignore these files, we need a gitignore file with all the files not to save to source control. Luckily the dotnet framework has such a file already created for us. So after initializing the go ahead and run `dotnet new gitignore`. You can see what projects and other things you can created with the dotnet command by typing in `dotnet new -l` which will list all the projects. 
+
+Finally, we want to add just one line to this gitignore file in order to not save our appsettings.json file. We are doing this because later in the project we will have special strings that are important that we never share. Unless you make a private github repo for this project, you never want to share important information in your code.
+
+```.gitignore
+## Ignore Visual Studio temporary files, build results, and
+## files generated by popular Visual Studio add-ons.
+##
+## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
+
+appsettings.json
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+```
+
+So now go ahead and make a new repository in your github account (or whatever you are using for source control). I went ahead and made the repository [here](https://github.com/NathanSwindall/dotnet-tutorial). Then your will run the following commands: 
+
+`git branch -M main` 
+-to create a main branch<br/>
+
+`git remote add origin https://github.com/NathanSwindall/dotnet-tutorial.git`<br/>
+-to add it as a repo to your git Project
+
+ `git push -u origin main` 
+ -to push it to your account<br />
+
 
 ## Final thoughts
-Using other databases
-Using Visual Studio code
-Using other data and doing other migrations 
-Why use multiple projects. Helps with clean architecture. It makes it so that we have to choose what accesses what. We could hav used a single project. 
-Creating the front-end in Elm, Vue, and React.js
+
+This was just a quick run down for making a quick API with dotnet. I think future projects would be implementing the same project in F#. I really am curious how the architecture and design, and maybe the verbosity of the project would change with a functional first language. We could have done everything in one project, but in the projects that I use in my current company, a lot of the functionality are given their own projects, so I think its best practice to get used to splitting out the different areas into projects, and it also makes our code more modular. We can choose what projects depend on other projects which is a way of hopefully keeping away bugs, and in a way makes the project more readable. I want to add a section for this tutorial maybe in the future that is about the different aspects of using attributes. I feel like the best way to really digest the material in any chapter is to start creating your own stuff. Some useful exercises to do in order to make sure that you understand most of this skeleton API are as follows: 
+
+<strong>(1)</strong> Model some data from the real world that you would want to see in a database and create a model for it in the Domain project. <br />
+<strong>(2)</strong> Add a migration for this data into your database, and then check to see it in your SQLite database. <br />
+<strong>(3)</strong> Make some seed data for your model like the one for Activities. <br />
+<strong>(4)</strong> Make a controller for this new type of data, and then test it out in postman. <br />
+<strong>(5)</strong> Spend some time looking at the code and messing around with it. Try going to the docs and adding features to your project. 
+
+I went ahead and gave and example of going through these problems. Firstly, I came up with something I wanted to model which was a country. There are many different traits that could represent a country, or information that we would like to know about a such as the government type or main language spoken. 
+
+
+```csharp
+namespace Domain
+{
+    public class Country
+    {
+        public Guid Id { get; set; }
+        public string CountryName { get; set; }
+        public int Population { get; set; }
+        public int GDP { get; set; }
+        public string Language { get; set; }
+        public string GovermentType { get; set; }
+        public string Leader { get; set; }
+    }
+}
+```
+
+I came up with quite a few. Now it is time to make a migration in order to add this as a table to our database. I order to make a migration we need to add this model to our DataContext file which is in our Persistence project. 
+
+```csharp 
+using Domain;
+using Microsoft.EntityFrameworkCore;
+
+namespace Persistence
+{
+    public class DataContext : DbContext
+    {
+        public DataContext(DbContextOptions options) : base(options) {}
+        public DbSet<Activity> Activities { get; set; }
+        public DbSet<Country> Countries {get; set; }
+    }
+}
+```
+
+We could run the migration manually using the commands we had earlier. From the Reactivities folder, you can now run `dotnet ef migrations add AddCountries-p Persistence -s API`.Notice that I renamed the migration to something specific to the type of migration we are making, and also make sure that you do not have your server running or you will get an error. If you go to the split view of your SQLite table you will see that countries is added as an entry. The ony problem is that we don't have any data for our countries, and thus we need to add data. 
+
+```csharp 
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace Persistence.Migrations
+{
+    public partial class AddCountry : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: "Countries",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CountryName = table.Column<string>(type: "TEXT", nullable: false),
+                    Population = table.Column<int>(type: "INTEGER", nullable: false),
+                    GDP = table.Column<int>(type: "INTEGER", nullable: false),
+                    Language = table.Column<string>(type: "TEXT", nullable: false),
+                    GovermentType = table.Column<string>(type: "TEXT", nullable: false),
+                    Leader = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Countries", x => x.Id);
+                });
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "Countries");
+        }
+    }
+}
+```
+
+I realized that I have made a mistake when creating the model. I accidentally created a property with the name `GovermentType` instead of `GovernmentType`. Thus, I actually need to remove one of the migrations and recreate that migration with the correct property name. See, this is why we do exercises. We are not just blindly following a tutorial but actually putting to practice the elements we learned and then adding onto them by facing problems that are outside the scope of the tutorial. In order to remove the last migration you can do the following command `dotnet ef migrations remove --force -p Persistence -s API`. This gets really tricky when you have already applied the migration to your database, but since I am using SQLite, I don't think it should be a problem necessarily. I had to use the `--force` keyword because I ran into some errors without just using the remove part. I am curious if cd into the Persistence folder and then just use the -s flag for the project if that will be easier. I think too, if this happened in production, I would have to drop the table form the database, because migrations just seem to be a way for C# to make tables in SQL with C# native code. After removing the last migration, I created a new migration. 
+
+You can create a new Seed file if you want and then just call both seed files for seeding your database, but I have decided to just make one seed file and created a list of data in the original `Seed.cs` file. Here are the following changes. 
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Domain;
+
+namespace Persistence
+{
+    public class Seed
+    {
+        public static async Task SeedData(DataContext context)
+        {
+            if (context.Activities.Any() && context.Countries.Any()) return;
+            
+            var activities = new List<Activity>
+            {
+                new Activity
+                {
+                    Title = "Past Activity 1",
+                    Date = DateTime.Now.AddMonths(-2),
+                    Description = "Activity 2 months ago",
+                    Category = "drinks",
+                    City = "London",
+                    Venue = "Pub",
+                },
+                new Activity
+                {
+                    Title = "Past Activity 2",
+                    Date = DateTime.Now.AddMonths(-1),
+                    Description = "Activity 1 month ago",
+                    Category = "culture",
+                    City = "Paris",
+                    Venue = "Louvre",
+                },
+                new Activity
+                {
+                    Title = "Future Activity 1",
+                    Date = DateTime.Now.AddMonths(1),
+                    Description = "Activity 1 month in future",
+                    Category = "culture",
+                    City = "London",
+                    Venue = "Natural History Museum",
+                },
+                new Activity
+                {
+                    Title = "Future Activity 2",
+                    Date = DateTime.Now.AddMonths(2),
+                    Description = "Activity 2 months in future",
+                    Category = "music",
+                    City = "London",
+                    Venue = "O2 Arena",
+                },
+                new Activity
+                {
+                    Title = "Future Activity 3",
+                    Date = DateTime.Now.AddMonths(3),
+                    Description = "Activity 3 months in future",
+                    Category = "drinks",
+                    City = "London",
+                    Venue = "Another pub",
+                },
+                new Activity
+                {
+                    Title = "Future Activity 4",
+                    Date = DateTime.Now.AddMonths(4),
+                    Description = "Activity 4 months in future",
+                    Category = "drinks",
+                    City = "London",
+                    Venue = "Yet another pub",
+                },
+                new Activity
+                {
+                    Title = "Future Activity 5",
+                    Date = DateTime.Now.AddMonths(5),
+                    Description = "Activity 5 months in future",
+                    Category = "drinks",
+                    City = "London",
+                    Venue = "Just another pub",
+                },
+                new Activity
+                {
+                    Title = "Future Activity 6",
+                    Date = DateTime.Now.AddMonths(6),
+                    Description = "Activity 6 months in future",
+                    Category = "music",
+                    City = "London",
+                    Venue = "Roundhouse Camden",
+                },
+                new Activity
+                {
+                    Title = "Future Activity 7",
+                    Date = DateTime.Now.AddMonths(7),
+                    Description = "Activity 2 months ago",
+                    Category = "travel",
+                    City = "London",
+                    Venue = "Somewhere on the Thames",
+                },
+                new Activity
+                {
+                    Title = "Future Activity 8",
+                    Date = DateTime.Now.AddMonths(8),
+                    Description = "Activity 8 months in future",
+                    Category = "film",
+                    City = "London",
+                    Venue = "Cinema",
+                }
+            };
+
+             var countries = new List<Country>
+            {
+                new Country
+                {
+                    CountryName = "France",
+                    Population = 67413000,
+                    GDP = 3322,
+                    Language = "French",
+                    GovernmentType = "Unitary semi-presidential republic",
+                    Leader = "Emmanuel Macron"
+                },
+                new Country
+                {
+                    CountryName = "Ethiopia",
+                    Population = 117876227,
+                    GDP = 401,
+                    Language = "Amharic",
+                    GovernmentType = "Ethnofederalist parliamentary republic",
+                    Leader = "Sahle-Work"
+                },
+                new Country 
+                {
+                    CountryName = "Afghanistan",
+                    Population = 40218234,
+                    GDP = 72,
+                    Language = "Dari",
+                    GovernmentType = "Unitary provisional theocratic islamic emirate",
+                    Leader = "Hibatullah Akhundzada"
+                }
+            };
+
+             // we are going to add these range of countries  to the database. Like staging them for git
+            await context.Countries.AddRangeAsync(countries);
+            
+            // we are going to add these range of activities to the database. Like staging them for git
+            await context.Activities.AddRangeAsync(activities);
+
+            // query to actually save the changes. 
+            await context.SaveChangesAsync();
+        }
+    }
+}
+```
+Make sure to change the if statement that starts off the object, because the data will never be seeded into the Countries table if you don't do that. Now you can restart your server and you should have data in your SQLite table. 
+
+Our final task is to create an API endpoint for the countries table. We will need to create a new Country controller that will have a get request for getting all the countries in a list and then a get request for get a specific country by id. For an extra challenge, create an endpoint that takes in a country with the a certain language, such as french, and only pull back the countries that have this specific language spoken there. 
+
+
+
+
+
+
 
