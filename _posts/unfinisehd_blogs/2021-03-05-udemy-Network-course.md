@@ -1,6 +1,6 @@
 ---
 layout: post
-category: notes
+category: notess
 title: David Bombal Network Course
 image: /Notes/assets/images/DavidBombal.jpg
 summary: Becoming a Network Genius

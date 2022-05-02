@@ -16,12 +16,15 @@ At my current job, I am using Vue.js with ASP.Net Core, but I haven't used ASP.N
 &rarr; <strong><a href="{{Slots}}"> API Skeleton</a></strong>
 <!-- I noticed when I have .md it ruins the file -->
 
+{% assign Slots = "Notes/Chapters/ASP/FSharpCSharp" | relative_url %} 
+&rarr; <strong><a href="{{Slots}}"> FSharp and CSharp interoperability </a></strong>
+
 {% assign Slots = "Notes/Chapters/ASP/ReactApp_Skeleton" | relative_url %} 
 &rarr; <strong><a href="{{Slots}}"> React Skeleton</a></strong>
 
 {% assign Slots = "Notes/Chapters/ASP/Vue_Skeleton" | relative_url %} 
-&rarr; <strong><a href="{{Slots}}"> React Skeleton</a></strong>
+&rarr; <strong><a href="{{Slots}}"> Vue Skeleton</a></strong>
 
 {% assign Slots = "Notes/Chapters/ASP/Elm_Skeleton" | relative_url %} 
-&rarr; <strong><a href="{{Slots}}"> React Skeleton</a></strong>
+&rarr; <strong><a href="{{Slots}}"> Elm Skeleton</a></strong>
 

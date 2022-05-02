@@ -98,29 +98,6 @@ customElements.define('hello-world', HelloWorld);
 ```
 Instead of adding the addEventListener function, you could actually create a script tag for the custom element and add it that way too to the button. For example, check out the following code:
 
-```JavaScript
-
-
-```
-
-## what we want to do
-
-
-## interplay with jekyll
-
-
-## shadow Dom
-
-
-## non- shadow dom one
-
-## scoped javascript
-
-
-## problems
-
-## make sure the path is correct in jekyll
-
 
 
 

@@ -7,6 +7,6 @@ date: 2022-04-28
 author: Nathan Swindall
 ---
 
-## <strong>Creating an Front-end Skeleton with Vue<strong>
+## <strong>Creating a Front-end Skeleton with Vue<strong>
 
-How do we make it with the composite API
+UNDER CONSTRUCTION!
