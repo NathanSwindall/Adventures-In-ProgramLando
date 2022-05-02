@@ -818,6 +818,17 @@ So now go ahead and make a new repository in your github account (or whatever yo
  `git push -u origin main` 
  -to push it to your account<br />
 
+ For some reasons I was getting some weird error for the last command. I realized that I forgot to stage everything. You have to make sure you stage everything and then push it up as the initial commit. So do the following commands and then the last one. 
+
+ `git add .`<br /> 
+ This command will track all untracked changes.<br />
+
+ `git commit -m "initial commit"`<br />
+ This command will stage all the tracked files <br />
+
+ `git push -u origin main` 
+ Finally, this will push it to the repository<br />
+
 
 ## Final thoughts
 
@@ -1063,8 +1074,58 @@ namespace Persistence
 ```
 Make sure to change the if statement that starts off the object, because the data will never be seeded into the Countries table if you don't do that. Now you can restart your server and you should have data in your SQLite table. 
 
-Our final task is to create an API endpoint for the countries table. We will need to create a new Country controller that will have a get request for getting all the countries in a list and then a get request for get a specific country by id. For an extra challenge, create an endpoint that takes in a country with the a certain language, such as french, and only pull back the countries that have this specific language spoken there. 
+Our final task is to create an API endpoint for the countries table. We will need to create a new Country controller that will have a get request for getting all the countries in a list and then a get request for get a specific country by id. For an extra challenge, create an endpoint that takes in a country with the a certain language, such as french, and only pull back the countries that have this specific language spoken there. The controller I came up with is as follows. 
 
+```csharp
+using Domain;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Persistence;
+
+namespace API.Controllers
+{
+    public class CountriesController : BaseController
+    {
+        private readonly DataContext _context;
+
+        public CountriesController(DataContext context)
+        {
+            _context = context;
+        }
+
+        [HttpGet] // api/Countries
+        public async Task<ActionResult<List<Country>>> GetCountries()
+        {
+            return await _context.Countries.ToListAsync();
+        }
+
+        [HttpGet("{id}")] //api/Activities/{id}
+        public async Task<ActionResult<Country>> GetCountry(Guid id)
+        {
+            return await _context.Countries.FindAsync(id);
+        }
+
+        [HttpGet("speak/{language}")] //api/Countries/speak/{language}
+        public async Task<ActionResult<List<Country>>> GetCountriesThatSpeak(string language)
+        {
+            return await _context.Countries.Where((Country country) => country.Language.ToLower() == language.ToLower()).ToListAsync();
+        }
+    }
+}
+```
+
+There are a few things to notice here. The first two endpoints are exactly like the ones we created for the activites endpoint except that we are using the words Country and Countries. We could try making the last endpont to have the word language in it as follows: 
+
+```csharp
+[HttpGet("{language}")] //api/Countries/{language}
+public async Task<ActionResult<List<Country>>> GetCountriesThatSpeak(string language)
+{
+    Console.WriteLine(language);
+    return await _context.Countries.Where((Country country) => country.Language.ToLower() == language.ToLower()).ToListAsync();
+}
+}
+```
+The problem is that this endpoint will clash with the id endpoint. The dotnet framework will treat "{id}" the same as "{language}". Thus, in order to get around this, we will have to actually extend the endpint route by another word or something to change it. For my solution, I changed the endpoint from "api/Countries/{language}" to "api/Countries/speak/{language}". In the `HttpGet` you can actually change the endpoint to really but whatever you like. Also, notice that instead of a `FindAsync` function that I use the `Where` clause. This is sort of like using the where in SQL, so if you are familiar with SQL, then using these functions shouldn't be too bad. Thus, this concludes are first introduction into the world of dotnet. 
 
 
 
