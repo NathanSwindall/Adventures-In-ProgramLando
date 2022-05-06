@@ -7,10 +7,30 @@ date: 2022-02-25
 author: Nathan Swindall
 ---
 
+
+
 ## <strong>Creating an API Skeleton<strong>
 
-In this section I will be creating a simple API that can be tested with postman to get data back in JSON format. The first thing we need to do is setup the project. 
+In this section I will be creating a simple API that can be tested with postman to get data back in JSON format. The first thing we need to do is setup the project. Here is the table of Contents: 
 
+- [Setup](#setup)
+    - [Domain](#domain)
+    - [Application](#application)
+    - [Persistence](#persistence)
+- [Project Files](#project-files)
+- [Reviewing the project file and startup](#reviewing-the-project-file-and-startup)
+- [The API controller and using postman](#the-api-controller-and-using-postman)
+- [Creating a Domain](#creating-a-domain)
+- [Adding an Entity Framework Db Context](#adding-an-entity-framework-db-context)
+- [Creating an Entity Framework code first migration](#creating-an-entity-framework-code-first-migration)
+- [Creating the database](#creating-the-database)
+- [Seeding our database (Createing our data Yay!!)](#seeding-our-database-creating-our-data-yay)
+- [Adding an API Controller](#adding-an-api-controller)
+- [Saving changes into source control](#saving-changes-into-source-control)
+- [Final Thoughts](#final-thoughts)
+
+If you want to clone the repository for just the skeleton section, you can find it here at my github: 
+`https://github.com/NathanSwindall/dotnet-tutorial/tree/skeleton`
 
 ### setup
 
@@ -386,7 +406,7 @@ When I was running the command, I kept running into a problem. The error I kept 
 #It was not possible to find any compatible framework version
 #The framework 'Microsoft.NETCore.App', version '2.0.0' (x64) was not found.
 ```
-I searched quite a bit for what was causing this error and found out that I had been entering the about command wrong. I kept entering `dotnet ef migrations add InitialCreate -p Persistence - s API` instead of `dotnet ef migrations add InitialCreate -p Persistence -s API`. That space between the '- s' caused this problem, so if you ever get this error, always make sure your commands are well typed. We get a few files once we run the migration. You can also use one of the options to specify which framework to use too. I am not sure if this will work but always know your commands. `The migration is where the DbContext, so this is where the files will show up. You will get a file called `initialCreate.cs`. This is where we have the C# code that converts to sql commands to make a table. It looks something like this: 
+I searched quite a bit for what was causing this error and found out that I had been entering the about command wrong. I kept entering `dotnet ef migrations add InitialCreate -p Persistence - s API` instead of `dotnet ef migrations add InitialCreate -p Persistence -s API`. That space between the '- s' caused this problem, so if you ever get this error, always make sure your commands are well typed. We get a few files once we run the migration. You can also use one of the options to specify which framework to use too. I am not sure if this will work but always know your commands. The migration is where the DbContext, so this is where the files will show up. You will get a file called `initialCreate.cs`. This is where we have the C# code that converts to sql commands to make a table. It looks something like this: 
 
 ```csharp
 namespace Persistence.Migrations

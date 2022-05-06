@@ -29,3 +29,23 @@ Finally, we can't forget to add these projects to our solution. Like in the C# e
 or we could shorten the command which would be: <br />
 
 `dotnet sln add src/Library`
+
+Now we are going to make a csharp project too. This is where we will put our csharp code in order to use with our fsharp application, or vice versa where we will use the fsharp code in our sharp program. I have decided to make a simple console project. 
+
+`dotnet new console -o src/csharp`
+
+We are then going to also add this file to our solution:
+
+`dotnet sln add src/csharp`
+
+The point of having a solution file is just another level of abstraction for organizing our project. It will help us better with project management, so in reality it probably doesn't matter that we have a solution file or that we add it to our solution file. Since we are going to try to use functions between our fsharp files and csharp files we will add them as a reference to our respective projects. Thus, cd into your library folder and run the command: 
+
+`dotnet add reference ../csharp`
+
+Then cd into the csharp file and run the command: 
+
+`dotnet add reference ../Library`
+
+
+
+
