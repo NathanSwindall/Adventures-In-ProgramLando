@@ -8,6 +8,7 @@ date: 2022-05-06
 author: Nathan Swindall
 ---
 
+<link rel="stylesheet" href="/blog-tech/assets/markdown.css">
 ## <strong>Godot Game engine</strong>
 
 The godot game engine is an open source game engine that uses a special python inspired script to make it easy for people new to programming to create their own games. The game engine is also compatible with C# out of the box, and with a little bit of work, you can also use other scripting languages as well. The docs are located [here](https://docs.godotengine.org/en/stable/index.html). I decided to try out the 2D [tutorial](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html), which was fairly easy to follow. Though, sometimes the C# implementation isn't explained fully in the docs to the desired amount, but they do a good job. I do feel that at times the tutorial does have the problem which a lot of tutorials have which is that they just dump a lot of code onto you. Even my tutorials have this problem. Since I am really into functional programming, I wanted to see what it was like to code a game in a functional language, and since F# and C# have such great interoperability, it seemed only natural to use this language. Fortunately, there is a great blog article [here](http://www.lkokemohr.de/fsharp_godot.html) that helps you set up the project. Though, I will admit that I have run into quite a few pitfalls when it came to the initial setup for the F# sharp scripts. It requires something that seems a little hacky at first, but once you get settled in, it's not too bad. 
@@ -140,9 +141,12 @@ If we were to go build our fsproj by using the command `dotnet build` in the God
 </Project>
 ```
 
-<p style="border: 5px solid #0d2f5c!important; border-radius: 16px; padding: 5px; background-color: lightblue !important; font-family: 'Lucida Console', 'Courier New, monospace;">
+<p style="border: 5px solid #0d2f5c!important; border-radius: 16px; padding: 5px; background-color: lightblue !important; font-family: 'Lucida Console', 'Courier New', monospace;">
 I have been using visual studio code, and I have been running into a lot of problems with it detecting the changes in my project files. They will be automatically marked with errors if you do not rebuild them after making the above changes, so make sure to rebuild both your project files for the FSharp and CSharp files. Then, it also might help to close your Visual Studio Code, and reopen it just in case because this actually fixed the highlighting problem for me. My folder tree looks something like the following. <a href="https://nathanswindall.com/">here</a>
 </p>
+
+
+
 
 <p></p>
 {%- assign FSharpFullSetup = "blog-tech/assets/images/godotFs/FSharpFullSetup.png" | relative_url-%}

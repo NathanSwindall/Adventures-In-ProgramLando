@@ -1,0 +1,8 @@
+
+.textBlurb {
+    border: 5px solid #0d2f5c!important; 
+    border-radius: 16px; 
+    padding: 5px; 
+    background-color: lightblue !important; 
+    font-family: 'Lucida Console', 'Courier New', monospace;
+}
