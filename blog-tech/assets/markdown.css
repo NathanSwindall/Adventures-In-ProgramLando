@@ -6,3 +6,11 @@
     background-color: lightblue !important; 
     font-family: 'Lucida Console', 'Courier New', monospace;
 }
+
+.code-style {
+    background: #d4bb9f;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #d1ddcd;
+    color:#000000
+}
