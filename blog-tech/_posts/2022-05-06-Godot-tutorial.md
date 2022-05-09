@@ -92,7 +92,7 @@ Then, we are going to add our fsproj file as a reference to our our csproj file.
 
 Now that we are done with this setup work, we will make a new folder for our FSharp scripts to go in called ScriptsFs. Make sure you are creating this in the directory of your CreepsFs file. Let's create a Player script file in FSharp. Don't worry too much about the contents of it. The most important right now is getting all the connections for everything. 
 
-```fs
+```cs
 namespace PlayerFSharp
 
 open Godot
@@ -140,9 +140,9 @@ If we were to go build our fsproj by using the command `dotnet build` in the God
 </Project>
 ```
 
-
-I have been using visual studio code, and I have been running into a lot of problems with it detecting the changes in my project files. They will be automatically marked with errors if you do not rebuild them after making the above changes, so make sure to rebuild both your project files for the FSharp and CSharp files. Then, it also might help to close your Visual Studio Code, and reopen it just in case because this actually fixed the highlighting problem for me. My folder tree looks something like the following. 
-
+<p style="border: 5px solid #0d2f5c!important; border-radius: 16px; padding: 5px; background-color: lightblue !important; font-family: 'Lucida Console', 'Courier New, monospace;">
+I have been using visual studio code, and I have been running into a lot of problems with it detecting the changes in my project files. They will be automatically marked with errors if you do not rebuild them after making the above changes, so make sure to rebuild both your project files for the FSharp and CSharp files. Then, it also might help to close your Visual Studio Code, and reopen it just in case because this actually fixed the highlighting problem for me. My folder tree looks something like the following. <a href="https://nathanswindall.com/">here</a>
+</p>
 
 <p></p>
 {%- assign FSharpFullSetup = "blog-tech/assets/images/godotFs/FSharpFullSetup.png" | relative_url-%}
