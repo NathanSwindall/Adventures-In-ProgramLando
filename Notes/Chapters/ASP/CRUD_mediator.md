@@ -184,7 +184,7 @@ Now lets add it as a service in order to be able to use postman to test the get 
 
 <div class="textBlurb">
 The first thing we are going to do is delete the constructor in the ActivitiesController class. We are trying to make our controllers thinner so we are going to add some logic to the BaseController class to make the derived controllers as thin and neat as possible. Now go to the BaseController class and add the following properties.  
-</div>
+</div><br/>
 
 ```cs 
 public class BaseController: ControllerBase
@@ -194,38 +194,105 @@ public class BaseController: ControllerBase
         protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>(); // available to any derived classes
     }
 ```
+
 <div class="textBlurb">
 There are few things to note here. We are using the protected keyword for the Mediator variable because we want any derived classes to be able to use this variable. Then, we are using a special function with the operator <code class="code-style">??=</code>. This special function means that if <code class="code-style">_mediator</code> is null then we will assign the result of <code class="code-style">HttpContext.RequestServices.GetService...</code> to our Mediator variable. Now, since we added the Mediator variable to our base controller. It will be available in all of our controllers. Let's add Mediator to the controllers now, and make sure to test everything in postman to make sure it works. 
-</div>
+</div> <br/>
 
 ```cs 
+ public class ActivitiesController : BaseController
+    {
+
+        [HttpGet] // api/Activities
+        public async Task<ActionResult<List<Activity>>> GetActivities()
+        {
+            return await Mediator.Send(new List.Query());
+        }
+
+        [HttpGet("{id}")] //api/Activities/{id}
+        public async Task<ActionResult<Activity>> GetActivity(Guid id)
+        {
+            // return await _context.Activities.FindAsync(id);
+            return Ok();
+        }
+    }
 ```
-This above gets the mediator service for our base controller and now we can use it in all the controllers that derive from it. 
-??= means if _mediator is null then I will do the function on the right
-add using statement Microsoft.Extensions.DependencyInjection
-add Mediator to the controllers you have
-Make sure to test out in postman
+
+
+<div class="textBlurb">
+Since we have access to the Mediator variable from our base controller, we can now just use it freely in our controllers. You will notice that I go rid of the constructor which exposed our DataContext over our controllers. Now we have hid away the implementation of everything and are contacting the DB on a different layer altogether, which is our Application layer that handles business logic. We are sending data through our controllers to the Mediator which can be found in the Application layer, and from this layer, the Mediator is sending the data back to the controller. 
+</div><br/>
 
 ## <strong>Adding a Details Handler</strong>
 
-So we have the other Query that we need to make which is getting a specific activity by id 
-In order to do this we will need to make another IHandler class like the 
-Making this business logic in the application part again 
-Create class in Activities folder called Details 
-create class inside that class called Query that inherits IRequest<Activity>
-bring in the using statements 
-This class takes a property 
-bring in a Guid id  
-create another class inside this activities part called Handler : IRequestHandler<Query, Activity>
-implement the interface 
-make the function async 
-create a constructor for Handler and inject our DataContext context 
-create readonly _context variable
-inside Handle make await _context.Activities.FindAsync(request.Id)
-the request is from Query and we have an id property on the query class 
-Go to Activities Controller 
-await Mediator.Send(new Details.Query{Id = id}) // Object initializer 
-Test in postman
+<div class="textBlurb">
+We are going to do something very similar to the last section. We are creating another query again. This pattern splits up things into queries which are meant for grabbing data, and then commands which will change data in the database. So, we are going to make another class in our Activities folder called <code class="code-style">Details.cs</code> this time. The class could really be called anything, but we are grabbing specific details fo an Activity. We are creating it in our business logic again (just had to write that to remind myself again). So after creating the class, make a class inside it called <code class="code-style">Query</code>. This pattern will become quite familiar to you as you make the other CRUD operations. Have the query class inherit from IRequest which will have a type of Activity. Also, add a property to the Query class with a Guid id. So it will look something like below. 
+</div><br/>
+
+```cs 
+namespace Application.Activities
+{
+    public class Details
+    {
+        public class Query : IRequest<Activity> 
+        {
+            public Guid Id { get; set; }
+        }
+
+    }
+}
+```
+
+
+<div class="textBlurb">
+We need to add the Handler class to our details class just like we did previous for the <code class="code-style">List.cs</code> class. So, go ahead and write a class that inherits from IRequestHandler with a type of Query, Activity. Then implement the interface to get rid of the red which will give you a function called Handle. This function should be async, so add async in front of it, and then add the following code to the return. Sorry, for writing so dryly, but there isn't too much excitement here. Also, you will need to add the using statements. 
+</div><br/>
+
+```cs
+using Domain;
+using MediatR;
+using Persistence;
+
+namespace Application.Activities
+{
+    public class Details
+    {
+        public class Query : IRequest<Activity> 
+        {
+            public Guid Id { get; set; }
+        }
+
+        public class Handler : IRequestHandler<Query, Activity>
+        {
+            private readonly DataContext _context;
+
+            public Handler(DataContext context)
+            {
+                _context = context;
+            }
+
+            public async Task<Activity> Handle(Query request, CancellationToken cancellationToken)
+            {
+                return await _context.Activities.FindAsync(request.Id); // Not handling the null case
+            }
+        }
+    }
+}
+```
+
+<div class="textBlurb">
+We are going to go back to our API controller for Activities and add <code class="code-style">await _context.Activities.FindAsync(request.Id)</code> to our return statement for our HtttpGet request for getting a singled activity by id. After you do this, make sure to test the route in Postman. 
+</div><br/>
+
+```cs 
+    [HttpGet("{id}")] //api/Activities/{id}
+    public async Task<ActionResult<Activity>> GetActivity(Guid id)
+    {
+        // return await _context.Activities.FindAsync(id);
+        return  await Mediator.Send(new Details.Query{Id = id});
+    }
+```
+<br/>
 
 ## <strong>Adding a Create Handler</strong>
 Add new class to Activities called Create 
