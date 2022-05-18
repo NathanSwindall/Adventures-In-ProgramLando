@@ -14,3 +14,22 @@
     border-color: #d1ddcd;
     color:#000000
 }
+
+
+.tblurb {
+    border: 5px solid #0d2f5c!important; 
+    border-radius: 16px; 
+    padding: 5px; 
+    background-color: #e8c39b!important; 
+    font-family: 'Lucida Console', 'Courier New', monospace;
+}
+
+.code-style2 {
+    background: #bae7d2;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #2d302c;
+    color:#000000;
+    /* opacity: 0.5; */
+    border-radius: 10px;
+} 
