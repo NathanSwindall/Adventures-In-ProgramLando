@@ -10,6 +10,9 @@ author: Nathan Swindall
 
 <link rel="stylesheet" href="/blog-tech/assets/markdown.css">
 
+- [Initial Setup](#the-initial-setup)
+- [Handling Signals](#handling-signals)
+
 ## <strong>Godot Game engine</strong>
 
 <p class="textBlurb">
@@ -162,5 +165,267 @@ I have been using visual studio code, and I have been running into a lot of prob
 <img src ="{{FSharpFullSetup}}">
 </p>
 
+<div class="textBlurb">
+Another interesting thing you can also do for development is adding interactive script file that will use F# interactive. I decided to add this file in order to test out new functions. I was having trouble developing certain functions for translating movement, and starting messing around with these functions in interactive mode and suddenly I was able to get the desired outcome. It's really simple to add an interactive file. Just add an FSharp file with the extension .fsx somewhere in your code base, and now you can use this file to rapidly develop functions for your code. The only problem I have run into is that I want to load certain functions and properties from the Godot Library into the script. Firstly, I need to show you the folder structure I have for the file: <br/><br/>
+
+{%- assign InteractiveFSharp = "blog-tech/assets/images/godotFs/InteractiveFSharp.png" | relative_url-%}
+<img src ="{{InteractiveFSharp}}"><br/><br/>
+
+I am currently working with a windows machine, so this may or may not work on another operating system. Now, in order to use the Godot Library in the interactive script, you will need to load in the assembly for Godot. Your assembly for Godot should be located somewhere in your mono folder that was automatically created when you created the game with the Godot GUI. I will go ahead and show you the first bit of the code I developed using the script. 
+</div>
+
+```cs
+#r "..\\.mono\\assemblies\\Release\\GodotSharp.dll"
+
+open Godot
+
+let square x = x * x
+
+let position = new Vector2(2.0f,2.0f)
+let position2 = new Vector2(5.0f, 5.0f)
+
+let vecComp (minVec: Vector2) (maxVec: Vector2) (posVec: Vector2) = 
+    let isLessMaxXORGreaterMinX = posVec.x >= minVec.x && posVec.x <= maxVec.x
+    let isLessMaxYOrGreaterMinY = posVec.y >= minVec.y && posVec.y <= maxVec.y 
+    isLessMaxXORGreaterMinX && isLessMaxYOrGreaterMinY
+
+```
+
+<div class="textBlurb">
+You Can see from the above how I loaded in the assembly for Godot, and now I can use Godot functions in my interactive mode. The only problem is that some stuff such as sprites does not load on my machine. I am not sure if it is because my machine has certain safety features on it that make it hard for processes to use administration privileges or not. I want to test it out on another one of my computers and maybe if I become not so lazy (even though I type out this whole blog), I will test it out. You can still use some functions easily in interactive mode such as <code class="code-style">GD.Print("From Godot Library")</code>. 
+</div>
+
+## <strong>Changing C# to F# Code</strong>
+
+<div class="textBlurb">
+Godot has a easy to follow tutorial for making both a Godot game in C# and GDScript. I decided to go through this tutorial for C# awhile ago because I wanted to make video games in a faster language, and if my understanding is correct, then C# should run faster. Unlike GDScript, C# is in a way a compiled language, but in the same vein as a language such a Java is compiled. Not as fast as C, or C++, but still better performance than other languages such as Python which GDScript seems to be based off of. When you finish the tutorial for the 2D game, which can be found <a href="https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html"></a> you should have a script with some of these features (Though to be honest, I didn't finish the whole tutorial so my script is a little smaller). I thought it would be a good exercise to go through this script first and change everything in it from C# to F#. 
+</div>
+
+```csharp
+using Godot;
+using System;
+
+public class Player : Area2D
+{
+	[Export]
+	public int Speed = 400; // How fast the player will move (pixels/sec)
+
+	[Signal]
+	public delegate void Hit();
+		
+	public Vector2 ScreenSize; // size of the game window
+
+	// Called when the node enters the scene tree for the first time.
+	public override void _Ready()
+	{
+		ScreenSize = GetViewportRect().Size;
+		Hide();
+	}
+	
+	public override void _Process(float delta)
+	{
+		var velocity = Vector2.Zero; 
+		
+		if (Input.IsActionPressed("move_right"))
+		{
+			velocity.x +=1;
+		}
+		
+		if (Input.IsActionPressed("move_left"))
+		{
+			velocity.x -= 1;
+		}
+
+		if (Input.IsActionPressed("move_down"))
+		{
+			velocity.y = 1;
+		}
+
+		if (Input.IsActionPressed("move_up"))
+		{
+			velocity.y -= 1;
+		}
+
+		var animatedSprite = GetNode<AnimatedSprite>("AnimatedSprite");
+
+		if (velocity.Length() > 0)
+		{
+			 velocity = velocity.Normalized() * Speed; 
+			 Console.WriteLine(velocity.x);
+			 Console.WriteLine(velocity.y);
+			 animatedSprite.Play();
+		}
+
+		else 
+		{
+			animatedSprite.Stop();
+		}
+
+		// delta is the amount of time between frames. This will make it so with different framerates the time is consistent. 
+		Position += velocity * delta; // property already on Class
+		Position = new Vector2( 
+			x: Mathf.Clamp(Position.x, 0, ScreenSize.x),
+			y: Mathf.Clamp(Position.y, 0, ScreenSize.y)
+		);
+
+		if (velocity.x !=0)
+		{
+			animatedSprite.Animation = "walk";
+			animatedSprite.FlipV= false; 
+
+			// See the note below about boolean assignment 
+			animatedSprite.FlipH = velocity.x < 0;
+		}
+
+		else if (velocity.y !=0)
+		{
+			animatedSprite.Animation = "up";
+			animatedSprite.FlipV = velocity.y > 0;
+		}
+	}
+
+	// This is a signal function. We are using the Hit() function we made earlier to be this function
+	private void _on_Player_body_entered(object body)
+	{
+		Hide(); // player disappears after being hit. 
+		EmitSignal(nameof(Hit));
+
+		// Must be defrred as we can't change physics properties on a physics call back 
+		GetNode<CollisionShape2D>("CollisionShape2D").SetDeferred("diabled", true);
+	}
+
+	public void Start(Vector2 pos)
+	{
+		Position = pos; 
+		Show();
+		GetNode<CollisionShape2D>("CollisionShape2D").Disabled = false;
+	}
+
+}
+
+```
+<div class="textBlurb">
+There are quite a few different areas in this C# class to look at, but obviously the first is just the class itself. You can pretty much write the exact same code in both F# and C#, but just using the syntax features of these languages. For example, C# variables by default are mutable, and in F# sharp they are immutable. In other words, you can reassign values to C# variables, but if you were to do the same things in F# it wouldn't work. You might think it's working, but trust me, and I hope I am already saving you a bunch of headaches I had to deal with, but it will not work... unless you use the keyword <code class="code-style">mutable</code> in the code. So, to write mutable C# code in F#, you just need to sprinkle on a little extra keywords and you have yourself some nice and simple mutable code. 
+</div>
 
 
+## <strong>Handling Signals<strong>
+
+
+## <strong>Heist Meisters Design</strong>
+<div class="textBlurb">
+
+
+Essential Experience 
+<ul>
+<li>Expert thief who sneaks </li>
+<li>Dark and dangerous - lost of tension </li>
+<li>Get out undetected </li>
+</ul><br/><br/>
+
+Gameplay Factors 
+<ul>
+<li>Top Down </li>
+<li>Can be seen briefly - detection rises fast and falls slowly </li>
+<li>Dark - can switch from normla vision to night vision (with penalties) </li>
+<li>Can't hurt guards. You're a thief, not an assassin. ( You could make it where you hurt the guards, but for now not FUTURE IDEAS!!!) </li>
+</ul>
+</div>
+
+
+### <strong>Assets</strong>
+
+- [50 sound effects for RPG/fantasy/adventure games](https://opengameart.org/content/50-rpg-sound-effects)
+- [Stealth Music](https://opengameart.org/content/stealth-music)
+- [Ui Pack Space Extension](https://opengameart.org/content/ui-pack-space-extension)
+- [topdown-shooter](https://opengameart.org/content/topdown-shooter)
+
+### <strong>CharacterTemplate</strong>
+
+Add KinematicBody2D [doc](https://docs.godotengine.org/en/stable/classes/class_kinematicbody2d.html)
+Add a sprite picture from the menu
+Add a CollisionShape2D 
+Add script
+
+```python 
+const SPEED = 10 
+const MAX_SPEED = 100 
+const FRICTION = 0.1 
+```
+
+Now we can inherit from this base class when making other characters
+
+### <strong>The Player Character</strong>
+
+add move_up, move_down, move_right, and move_left to the input Map in project settings 
+Create and inherited scene from your templateCharacter.tscn 
+Then, if you want, change the sprite, and delete the script for it. 
+Now, make a new script and have it inherit from the baseClass (templateCharacter class)
+Maybe it would be better to name it Base. 
+  -How would I do the inheritance in F#
+
+Add a variable
+
+```python
+extends "res://Characters/TemplateCharacter.gd"
+var motion = Vector2()
+
+func _physics_process(delta)
+  update_movement()
+  move_and_slide(motion)
+
+func update_movement(): 
+  look_at()
+  # y direction
+  if Input.is_action_pressed("move_down"):
+    motion.y = clamp(motion.y + SPEED, 0 , MAX_SPEED)
+  elif Input.is_action_pressed("move_up"):
+    motion.y = clamp(motion.y + SPEED, -MAX_SPEED, 0)
+  else: 
+    motion.y = lerp(motion.y, 0, FRICTION)
+  # x direction
+  if Input.is_action_pressed("move_left"):
+    motion.y = clamp(motion.y + SPEED, 0, MAX_SPEED)
+  elif Input.is_action_pressed("move_right"):
+    motion.y = clamp(motion.y + SPEED, MAX_SPEED, 0)
+  else: 
+	motion.x = lerp(motion.x, 0, FRICTION)
+```
+
+The arguments for the clamp function are (initial value, min, max)
+What is the difference between _physics_process and _process.
+
+The lerp function will give us something to slide into. 
+loat Mathf.Lerp(float from, float to, float weight) 
+
+## <strong>Autotiles are Awesome Bitmasks</strong>
+
+Pros and Cons of Autotiling 
+- Make making levels much faster 
+- Very easy to tweak levels 
+- Can set up collision, occlusion and navigation in one place 
+
+Cons 
+- Initial set up is a fiddly and time consuming 
+
+Make Add 2dnode with a sprite child 
+put the tile sheet as tecture 
+convert to tileset and save in new folder called tiles save as tres 
+
+Now make a new 2Dscene and call is BaseLevel (he calls it tmeplate level)
+Now add a tileMap as a child 
+In the inspector add the tile map you just created into it. 
+Now save in a levels folder. 
+Edit the tile map and make it 64 x 64 instead of 32 by 32
+
+We are going to click on the autotile option 
+we want 3x3 minimal becuase it doesn't take into account the diagonals. 
+What happens if we do go with a three by three. Now we sectected a region and make a bitmask for it
+Now you should be able to pain the walls with your tile map. 
+If you get weird lines in your system, then make sure you imported it right. 
+Go to project settings and change the enviroment background to black. 
+
+Challenge, make your own tile mapped floor. 
+The percentages can make random floors which is cool. 
+
+## <strong>Setting up Collisions in an Autotile</strong>

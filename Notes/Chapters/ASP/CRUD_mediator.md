@@ -182,10 +182,222 @@ Now lets add it as a service in order to be able to use postman to test the get 
 
 ## <strong>Thin Controllers in API</strong>
 
+<div class="textBlurb">
+The first thing we are going to do is delete the constructor in the ActivitiesController class. We are trying to make our controllers thinner so we are going to add some logic to the BaseController class to make the derived controllers as thin and neat as possible. Now go to the BaseController class and add the following properties.  
+</div>
+
+```cs 
+public class BaseController: ControllerBase
+    {
+        private IMediator _mediator;
+
+        protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>(); // available to any derived classes
+    }
+```
+<div class="textBlurb">
+There are few things to note here. We are using the protected keyword for the Mediator variable because we want any derived classes to be able to use this variable. Then, we are using a special function with the operator <code class="code-style">??=</code>. This special function means that if <code class="code-style">_mediator</code> is null then we will assign the result of <code class="code-style">HttpContext.RequestServices.GetService...</code> to our Mediator variable. Now, since we added the Mediator variable to our base controller. It will be available in all of our controllers. Let's add Mediator to the controllers now, and make sure to test everything in postman to make sure it works. 
+</div>
+
+```cs 
+```
+This above gets the mediator service for our base controller and now we can use it in all the controllers that derive from it. 
+??= means if _mediator is null then I will do the function on the right
+add using statement Microsoft.Extensions.DependencyInjection
+add Mediator to the controllers you have
+Make sure to test out in postman
+
+## <strong>Adding a Details Handler</strong>
+
+So we have the other Query that we need to make which is getting a specific activity by id 
+In order to do this we will need to make another IHandler class like the 
+Making this business logic in the application part again 
+Create class in Activities folder called Details 
+create class inside that class called Query that inherits IRequest<Activity>
+bring in the using statements 
+This class takes a property 
+bring in a Guid id  
+create another class inside this activities part called Handler : IRequestHandler<Query, Activity>
+implement the interface 
+make the function async 
+create a constructor for Handler and inject our DataContext context 
+create readonly _context variable
+inside Handle make await _context.Activities.FindAsync(request.Id)
+the request is from Query and we have an id property on the query class 
+Go to Activities Controller 
+await Mediator.Send(new Details.Query{Id = id}) // Object initializer 
+Test in postman
+
+## <strong>Adding a Create Handler</strong>
+Add new class to Activities called Create 
+add a new class called Command that inherits the IRequest but this time we don't do <Activity>
+add an property to this class that is an Activity property 
+Now add a new class called Handle : IRequestHandler<Command>. Notice it doesn't have any reture item. We could make it have a return item maybe. 
+implement the interface and using all the using statements to clear the red. 
+Add datacontext in the constructor function using the readonly way. 
+From there we are going to use _context.Activities.Add(request.Activity)
+We don't need to use AddAsync here because it is only saving to local memory and not our database right now .
+Then add await _context.SaveChangesAsync(). This uses our database so we need to save it. 
+Our function has to return a Task<Unit> so we will to a return Unit.Value; to get rid of the red. 
+Now go to Activities controller 
+Add a Create Activity with an [HttpPost] attribute above it. 
+return Ok(await Mediator.Send(new Create.Command{Activity = activity})) 
+make sure the Task<IActionResult> is used in the function as a return value. 
+Test in Postman. 
+In properties you can use {{$guid}} that will make postman produce its own Guid. 
+You could use [FromBody] attribute
+Then make the date variable = {{activityDate}} for a variable in the pre-request Script 
+    var moment = require("moment")
+    pm.environment.set('activityDate', moment().add(14,'day's).toISOString());
+
+Fully test out in Postman
+
+## <strong>Adding an Edit Handler</strong>
+
+First thing we are going to do is create and Edit class in Activities 
+Create a Command class that inherits IRequest 
+Make a property in this class for an Activity  Activity Activity 
+Make another Handle class that inherits IRequestHandler<Command>
+implement the interface with it and create the constructor that takes in our Datacontext 
+Because we are updating we need to actually get the activity first. 
+Firstly, we do a 
+    var activity = await _context.Activities.FindAsync(request.Activity.Id)
+    then let's just change the title right now 
+    activity.Title = request.Activity.Title ?? activity.Title
+notice that we are using ?? instead of ??= 
+now await _context.SaveChangesAsync() 
+return Unit.Value
+Now go to Activities Controller 
+create a put request because we use put requests to change things 
+It should take an id 
+create function EditActivity(Guid id, Activity activity)
+activity.Id = id
+then return Mediator.Send(new Edit.Command{Activity = activity)
+test out in postman. 
+
+## <strong>Adding AutoMapper</strong>
+
+In the last section, to update a single property wasn't too bad, but if we wanted to update quite a few properties, this could get pretty unwieldy after many times. 
+So, we need to add a folder called Core to our Applicaton project 
+Install autoMapper with dependency extensions from the Nuget Library
+Now create a class in the core folder called Mapping Profiles 
+Make the class derive from Profile (which is from AutoMapper)
+add the dependency to our startup file. This will be very similar to the one we added for list. 
+It seems that we don't need to add a dependencyinjection for all the List like objects 
+so Services.
+
+create a constructor for the MappingProfiles
+
+```cs
+using AutoMapper;
+using Domain 
+
+namespace Application.Core 
+
+    public class MappingProfiles : Profile 
+    {
+        public MappingProfiles()
+        {
+            CreateMap<Activity, Activity>(); // Mapping from an Activity to an Activity 
+        }
+    }
+```
+
+Dependency inject the IMapper interface into your Edit Handler constructor and add the readonly variables
+Now in Handle _mapper.Map(request.Activity, activity) so we are mapping the the activities from the request to the activity in the database
+Now test in PostMan
+
+
+## <strong>Adding a Delete Handler</strong>
+
+Commands don't return anything
+Add a new class to the application activities folder called Delete
+Go ahead and make the command class in your delete class and have it inherit from IRequest
+Create a property on this class for the Guid id 
+Now create a Handler class and inherit from IRequestHandler<Command>
+No make the Handle async 
+We are going to make a constructor for the Handler class that dependency injects the DataContext field into 
+Now go to the handle method and add 
+
+```cs 
+var activity = await _context.Acitvities.FindAsync(request.request.Id)
+
+_context.Remove(activity); // removes from memory
+
+await _context.SaveChangesAsync(); // actually updates the database
+
+return Unit.Value;
+```
+
+Add the endpoint now 
+
+```cs
+[HttpDelete("{id"})]
+public async Task<IActionResult> DeleteActivity(Guid id)
+{
+    return Ok(await Mediator.Send(new Delete.Command {Id = id}))
+}
+```
+
+## <strong>Startup Class Housekeeping</strong>
+
+In the api, add a new folder Extensions 
+Create a new class ApplicationServiceExtensions, make it static 
+create a static method 
+```cs
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
+    {
+        .... // cut an paste all the code from the starter class here except for the addcontrollers code
+        return services
+    }
+```
+Then add this method in our starter class. 
+
+
+## <strong>CancellationToken</strong>
+
+The cancellation token is to be used when a user cancels the request so that the request gets cancelled. If we don't use the cancellation token when the user 
+cancels the request, then the request will still try to hit the endpoint and bring back data. 
+
+In the List.cs file, put this in the Handle method
+
+```cs
+
+try{
+
+    for (var i = 0; i < 10: i++)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        await Task.Delay(1000, cancellationToken);
+        _logger.LogInformation($"Task {i} has completed");
+    }
+} catch (Execption ex) when (ex is TaskCanceledExpeception)
+{
+    _logger.LogInformation("Task was cancelled");
+}
+
+```
+
+Now, let's go to the Activitiescontroller.cs, we want to make sure to pass the httpGet for activities function the parameter CancellationToken ct
+Then, pass ct as a parameter to the Mediator class
+Now it is available in our List.cs class. 
+If we try it now, and cancel the request, then we can use it. 
 
 
 
-Independent from frameworks 
-Testable 
-Independent from the interface (React)
-Independent from the database
+## <strong>Using debugger in VS Code</strong>
+
+If you don't have the .vscode files in your other files, then you will need to generate it. Just type in generate after doing ctrl + shift + p on windows.
+Now, you can go into debugger mode. There are two different debugger modes. One is for attaching to an already running server. This way will require you to chose the dotnet version that has the API.exe file, while the other will help you debug your started files because it starts the file for you.
+
+## <strong>Summary</strong>
+
+We made different layers to map to Clean Architecture. 
+We looked at CQRS + Mediator pattern. 
+Our api controllers send something to our business logic which has a Mediator. Mediator will form the request and then send it back out to our API Controller. 
+We created the CRUD operations
+
+[Even Sourcing](https://youtu.be/JHGkaShoyNs)
+
+How would you use a NoSQL database with our server instead? Could you use the Mediator Pattern? How would all this be implemented. 
+Different NoSQL database are MongoDB, Azure Cosmos DB, Cassandra, RavenDB, CouchDB, ... these might be interesting. 
+
