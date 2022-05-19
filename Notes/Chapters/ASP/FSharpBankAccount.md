@@ -16,7 +16,7 @@ author: Nathan Swindall
 <div class="tblurb">
 Create a new solution file in a folder of your choosing <br/><br/>
 <code class="code-style2"> dotnet new sln -o BankAccountApp</code> <br/><br/>
-Create a new solution file in and connect it to that solution file <br/><br/>
+Then change the directory to your app file. Create a new solution file in and connect it to that solution file <br/><br/>
 <code class="code-style2"> dotnet new console -lang "F#" -o src/App</code> <br/><br/>
 <code class="code-style2"> dotnet sln add src/App</code> <br/><br/>
 Now we are going to create a library to use in our app. This will really teach us how to setup an F# project. <br/><br/>
@@ -25,5 +25,6 @@ Then we need to connect it with our solution. <br/><br/>
 <code class="code-style2"> dotnet sln add src/Library</code> <br/><br/>
 Now that we have added it to our sln, we need to make it so our app project can reference the library module. <br/><br/>
 <code class="code-style2"> dotnet add src/App reference src/Library</code> <br/><br/>
+Then finally, you are going to create a <code class="code-style2">Library.fsx</code> in our Library folder in order to have an interactive script to test out our library functions. 
 </div>
 

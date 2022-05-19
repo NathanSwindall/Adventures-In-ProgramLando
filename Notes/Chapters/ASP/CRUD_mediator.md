@@ -295,28 +295,72 @@ We are going to go back to our API controller for Activities and add <code class
 <br/>
 
 ## <strong>Adding a Create Handler</strong>
-Add new class to Activities called Create 
-add a new class called Command that inherits the IRequest but this time we don't do <Activity>
-add an property to this class that is an Activity property 
-Now add a new class called Handle : IRequestHandler<Command>. Notice it doesn't have any reture item. We could make it have a return item maybe. 
-implement the interface and using all the using statements to clear the red. 
-Add datacontext in the constructor function using the readonly way. 
-From there we are going to use _context.Activities.Add(request.Activity)
-We don't need to use AddAsync here because it is only saving to local memory and not our database right now .
-Then add await _context.SaveChangesAsync(). This uses our database so we need to save it. 
-Our function has to return a Task<Unit> so we will to a return Unit.Value; to get rid of the red. 
-Now go to Activities controller 
-Add a Create Activity with an [HttpPost] attribute above it. 
-return Ok(await Mediator.Send(new Create.Command{Activity = activity})) 
-make sure the Task<IActionResult> is used in the function as a return value. 
-Test in Postman. 
-In properties you can use {{$guid}} that will make postman produce its own Guid. 
-You could use [FromBody] attribute
-Then make the date variable = {{activityDate}} for a variable in the pre-request Script 
-    var moment = require("moment")
-    pm.environment.set('activityDate', moment().add(14,'day's).toISOString());
 
-Fully test out in Postman
+<div class="textBlurb">
+The create endpoint will be slightly different from the previous examples, but will follow the same pattern. We are going to once again create a class in the Activities folder, but with the name <code class="code-style">Create.cs</code>. In this class we are going to create a Command class (not the query class as in the previous examples), and a <code class="code-style">Handler</code> class within the Create.cs class. like in the examples before. Remember that queries are getting something while commands are telling our code to do something. This is why we use <code class="code-style">Query</code> for getting something will we use and <code class="code-style">Command</code> for changing something or creating something. We will add a property to the command class becasue this is what we are creating and inherit from IRequest but this time just IRequest. Then the Handler class will inherit from the IRequestHandler with Command as the type.  
+</div><br/>
+
+```cs
+using Domain;
+using MediatR;
+using Persistence;
+
+namespace Application.Activities
+{
+    public class Create
+    {
+        public class Command : IRequest
+        {
+            public Activity Activity { get; set; }
+        }
+
+        public class Handler : IRequestHandler<Command>
+        {
+
+            private readonly DataContext _context;
+            public Handler(DataContext context)
+            {
+                _context = context;
+
+            }
+            async Task<Unit> IRequestHandler<Command, Unit>.Handle(Command request, CancellationToken cancellationToken)
+            {
+                _context.Activities.Add(request.Activity); // stored into memory so we don't need to add await
+
+                await _context.SaveChangesAsync();
+
+                return Unit.Value; // because our code must return something
+            }
+        }
+    }
+}
+```
+<br/>
+<div class="textBlurb">
+The implementation of the IRequestHandler class looks a bit different, but it's not too important. Just go with the flow. We are adding the DataContext variable like normally. For the implementation of the Handle function we are use the Add function on the context variable. We don't make it async because we are just adding it in memory. We use async when making the save to the Database. We have to return something for this function, but since we are just saving and not wanting anything back, we will return <code class="code-style">Unit.value</code> which is just a dummy value. Now let's make the post route. Go to the Activities Controller and add a new function call <code class="code-style">CreateActivity</code>. Make it async, the task object will be of type<code class="code-style">IActionResult</code> instead of the <code class="code-style">ActionResult</code> like the previous versions. 
+</div><br/>
+
+```cs 
+[HttpPost]
+public async Task<IActionResult> CreateActivity(Activity activity)
+{
+    return Ok(await Mediator.Send(new Create.Command{Activity = activity}));
+}
+```
+<br/>
+
+<div class="textBlurb">
+The one last thing to notice is that the Parameter is activity. The framework is smart enough to know where it is getting this parameter, which is from the body of the request, but if you want to add it to the beginning of the parameter, you could write it like the following: 
+</div><br/>
+
+```cs 
+[HttpPost]
+public async Task<IActionResult> CreateActivity({FromBody]Activity activity)
+{
+    return Ok(await Mediator.Send(new Create.Command{Activity = activity}));
+}
+```
+<br/>
 
 ## <strong>Adding an Edit Handler</strong>
 
