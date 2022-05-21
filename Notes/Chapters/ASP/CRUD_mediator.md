@@ -362,6 +362,19 @@ public async Task<IActionResult> CreateActivity({FromBody]Activity activity)
 ```
 <br/>
 
+<div class="textBlurb">
+This request is a littler trickier to test out then the previous requests. This is because we have to do some setup in Postman in order for it to work. We are going to send a json file like the following. <br/>
+{%- assign PostmanCreateActivity = "Notes/assets/images/Dotnet/PostmanCreateActivity.png" | relative_url-%}
+<img src="{{PostmanCreateActivity}}"><br/><br/>
+
+You can see that we have a variable for the guid, and a variable for activityDate. Postman has the ability to automatically make Guid types for you when sending data. Making a specific activity date is a little trickier. You are going to actually have to write a Pre-request script in order to do that. <br/><br/>
+
+{%- assign PostmanCreatePreScript = "Notes/assets/images/Dotnet/PostmanCreatePreScript.png" | relative_url-%}
+<img src="{{PostmanCreatePreScript}}"><br/><br/>
+
+If you get a 405 error method not found. You might want to stop and restart you server because this might be able to fix it. The script above actually creates a date that is 14 days ahead of the current date. 
+</div>
+
 ## <strong>Adding an Edit Handler</strong>
 
 First thing we are going to do is create and Edit class in Activities 
