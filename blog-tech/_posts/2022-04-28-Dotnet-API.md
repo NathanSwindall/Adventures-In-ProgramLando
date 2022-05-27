@@ -41,8 +41,8 @@ At my current job, I am using Vue.js with ASP.Net Core, but I haven't used ASP.N
 {% assign Slots = "Notes/Chapters/ASP/Elm_Skeleton" | relative_url %} 
 &rarr; <strong><a href="{{Slots}}"> Elm Skeleton</a></strong>
 
-
-
+{% assign Slots = "Notes/Chapters/ASP/FSharp_dependcy" | relative_url %} 
+&rarr; <strong><a href="{{Slots}}"> FSharp Thoughts</a></strong>
 
 
 

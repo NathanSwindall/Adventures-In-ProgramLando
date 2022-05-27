@@ -17,11 +17,24 @@ At my current job, I am using Vue.js with ASP.Net Core, but I haven't used ASP.N
 &rarr; <strong><a href="{{Slots}}"> API Skeleton - Main app 1</a></strong>
 <!-- I noticed when I have .md it ruins the file -->
 
-{% assign Slots = "Notes/Chapters/ASP/FSharpCSharp" | relative_url %} 
-&rarr; <strong><a href="{{Slots}}"> FSharp and CSharp interoperability </a></strong>
 
 {% assign Slots = "Notes/Chapters/ASP/ReactApp_Skeleton" | relative_url %} 
 &rarr; <strong><a href="{{Slots}}"> React Skeleton - Main app 2</a></strong>
+
+
+{% assign Slots = "Notes/Chapters/ASP/CRUD_mediator" | relative_url %} 
+&rarr; <strong><a href="{{Slots}}"> CRUD application using CQRS + Mediator pattern - Main app 3</a></strong>
+
+{% assign Slots = "Notes/Chapters/ASP/CRUD_React" | relative_url %} 
+&rarr; <strong><a href="{{Slots}}"> CRUD application using React - Main app 4</a></strong>
+
+{% assign Slots = "Notes/Chapters/ASP/FSharpBankAccount" | relative_url %} 
+&rarr; <strong><a href="{{Slots}}"> FSharp Bank Account App </a></strong>
+
+
+{% assign Slots = "Notes/Chapters/ASP/FSharpCSharp" | relative_url %} 
+&rarr; <strong><a href="{{Slots}}"> FSharp and CSharp interoperability </a></strong>
+
 
 {% assign Slots = "Notes/Chapters/ASP/Vue_Skeleton" | relative_url %} 
 &rarr; <strong><a href="{{Slots}}"> Vue Skeleton</a></strong>
@@ -29,8 +42,7 @@ At my current job, I am using Vue.js with ASP.Net Core, but I haven't used ASP.N
 {% assign Slots = "Notes/Chapters/ASP/Elm_Skeleton" | relative_url %} 
 &rarr; <strong><a href="{{Slots}}"> Elm Skeleton</a></strong>
 
-{% assign Slots = "Notes/Chapters/ASP/CRUD_mediator" | relative_url %} 
-&rarr; <strong><a href="{{Slots}}"> CRUD application using CQRS + Mediator pattern - Main app 3</a></strong>
+{% assign Slots = "Notes/Chapters/ASP/FSharp_dependcy" | relative_url %} 
+&rarr; <strong><a href="{{Slots}}"> FSharp Thoughts</a></strong>
 
-{% assign Slots = "Notes/Chapters/ASP/CRUD_React" | relative_url %} 
-&rarr; <strong><a href="{{Slots}}"> CRUD application using React - Main app 4</a></strong>
+

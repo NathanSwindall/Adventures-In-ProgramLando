@@ -1,5 +1,5 @@
 
-.textBlurb {
+.textBlurb  {
     border: 5px solid #0d2f5c!important; 
     border-radius: 16px; 
     padding: 5px; 
@@ -18,10 +18,10 @@
 
 .tblurb {
     border: 5px solid #0d2f5c!important; 
-    border-radius: 16px; 
-    padding: 5px; 
+    border-radius: 16px !important; 
+    padding: 5px !important; 
     background-color: #e8c39b!important; 
-    font-family: 'Lucida Console', 'Courier New', monospace;
+    font-family: 'Lucida Console', 'Courier New', monospace !important;
 }
 
 .code-style2 {

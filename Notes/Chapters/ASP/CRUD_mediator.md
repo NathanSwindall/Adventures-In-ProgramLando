@@ -377,39 +377,85 @@ If you get a 405 error method not found. You might want to stop and restart you 
 
 ## <strong>Adding an Edit Handler</strong>
 
-First thing we are going to do is create and Edit class in Activities 
-Create a Command class that inherits IRequest 
-Make a property in this class for an Activity  Activity Activity 
-Make another Handle class that inherits IRequestHandler<Command>
-implement the interface with it and create the constructor that takes in our Datacontext 
-Because we are updating we need to actually get the activity first. 
-Firstly, we do a 
-    var activity = await _context.Activities.FindAsync(request.Activity.Id)
-    then let's just change the title right now 
-    activity.Title = request.Activity.Title ?? activity.Title
-notice that we are using ?? instead of ??= 
-now await _context.SaveChangesAsync() 
-return Unit.Value
-Now go to Activities Controller 
-create a put request because we use put requests to change things 
-It should take an id 
-create function EditActivity(Guid id, Activity activity)
-activity.Id = id
-then return Mediator.Send(new Edit.Command{Activity = activity)
-test out in postman. 
+<div class="textBlurb">
+The next endpoint that we are going to construct is the edit endpint. The point is going to be very similar to the one for create where it will be a command type, but there will be some minor differences. We will setup everything pretty similarly the way we setup the create class with first making a new class called <code class="code-style">Edit.cs</code> in the Activities folder of our application project. Then we will create two new class that will inherit from the IRequest and IRequestHandler again with the type of Command. The property that the Command class will have will be a Activity property. Let me show you the code. 
+</div><br/>
+
+```cs
+namespace Application.Activities
+{
+    public class Edit
+    {
+        public class Command : IRequest
+        {
+            public Activity Activity { get; set; }
+        }
+
+        public class Handler : IRequestHandler<Command>
+        {
+            private readonly DataContext _context;
+            public Handler(DataContext context)
+            {
+                _context = context;
+
+            }
+            async Task<Unit> IRequestHandler<Command, Unit>.Handle(Command request, CancellationToken cancellationToken)
+            {
+                var activity = await _context.Activities.FindAsync(request.Activity.Id);
+
+                activity.Title = request.Activity.Title ?? activity.Title;
+
+                await _context.SaveChangesAsync();
+
+                return Unit.Value;
+
+            }
+        }
+    }
+}
+```
+<br/>
+
+<div class="textBlurb">
+implementation of the Handle function will be slightly different, and we will hold off on its true implementation until the next section. First, we are getting the activity from our datacontext variable according to the id we get from the request. Then, if in the request we are changing the title, then we will change the activities title in memory, if not, we will keep the old title. Finally we will save it asynchronously to the database. We have to use the <code class="code-style">Unit.Value</code> because the function has to return something. Now, we are going to write our endpoint in the controller to talk to this new request. The edit endpoint will be a <code class="code-style">PUT</code> request because we are just editing an activity already there. The <code class="code-style">POST</code> request is for if we are creating a new activity. We are editing a specific activity too, so we will need to add the id to the path. But this begs the question, are we going to have to had a line for each property we are going to change? What if we have hundreds of properties that need to be change? In all due time! Just work with me right now. 
+</div>
+
+```cs
+[HttpPut("{id}")]
+public async Task<IActionResult> EditActivity(Guid id, Activity activity)
+{
+    activity.Id = id;
+    return Ok(await Mediator.Send(new Edit.Command{Activity = activity}));
+}
+```
+
+<div class="textBlurb">
+As a reminder, we are trying to edit an activity, so we are included the activity edits in the request, so the dotnet framework is smart enough to know that the activity comes from the request. We are attaching the id to this activity before sneding it off to the mediator class, so that class can pull the current activity from the database. In postman, we will have to setup the environment slightly like we did for the create request. <br/>
+
+{%- assign PostmanEditJson = "Notes/assets/images/Dotnet/PostmanEditJson.png" | relative_url-%}
+<img src="{{PostmanEditJson}}"><br/><br/>
+
+You will have to setup the prescript exactly like you did for the create request. <br/>
+
+
+{%- assign PostmanEditPreScript= "Notes/assets/images/Dotnet/PostmanEditPreScript.png" | relative_url-%}
+<img src="{{PostmanEditPreScript}}"><br/><br/>
+
+
+</div>
+ 
+
 
 ## <strong>Adding AutoMapper</strong>
 
-In the last section, to update a single property wasn't too bad, but if we wanted to update quite a few properties, this could get pretty unwieldy after many times. 
-So, we need to add a folder called Core to our Applicaton project 
-Install autoMapper with dependency extensions from the Nuget Library
-Now create a class in the core folder called Mapping Profiles 
-Make the class derive from Profile (which is from AutoMapper)
-add the dependency to our startup file. This will be very similar to the one we added for list. 
-It seems that we don't need to add a dependencyinjection for all the List like objects 
-so Services.
+<div class="textBlurb">
+In the last section, to update a single property wasn't too bad, but if we wanted to update quite a few properties, this could get pretty unwieldy after many times. So, first we need to make a new folder in the application layer called Core. We are going to have to install a new nuget package. The nuget package is called <code class="code-style">AutoMapper.Extensions.Microsoft.DependencyInjection</code>. Now create a class in the folder called <code class="code-style">MappingProfiles</code>, and have this class inherit from Profile which we will get from <code class="code-style">using AutoMapper</code>. The tricky part is adding the dependency to our startup file in the API folder. With the newest update you won't probably need a using statement, but you might need to restart your visual studio code, or use <code class+code-style>dotnet restore</code> if you IDE marks the new line of code as red. The code to add to your start up file is: <br/><br/>
 
-create a constructor for the MappingProfiles
+<code class="code-style">services.AddAutoMapper(typeof(MappingProfiles).Assembly);</code><br/><br/>
+
+Then, the class you made is below. 
+</div> <br/>
+
 
 ```cs
 using AutoMapper;
@@ -425,12 +471,38 @@ namespace Application.Core
         }
     }
 ```
+<br/>
+<div class="textBlurb">
+Now that we have everything wired up, we need to add it as a dependency injection in our edit class. Then we will add another line of code in the Handle request so that we are mapping any changes in the request onto our database Activity. Finally, make sure to test it in postman. You can just pick a specific id and then use that one to change the contents of the activity. Make sure to do a get request to see your changes. 
+</div> <br/>
 
-Dependency inject the IMapper interface into your Edit Handler constructor and add the readonly variables
-Now in Handle _mapper.Map(request.Activity, activity) so we are mapping the the activities from the request to the activity in the database
-Now test in PostMan
 
+```cs 
+public class Handler : IRequestHandler<Command>
+        {
+            private readonly DataContext _context;
+            private readonly IMapper _mapper;
+            public Handler(DataContext context, IMapper mapper)
+            {
+                _mapper = mapper;
+                _context = context;
 
+            }
+            async Task<Unit> IRequestHandler<Command, Unit>.Handle(Command request, CancellationToken cancellationToken)
+            {
+                var activity = await _context.Activities.FindAsync(request.Activity.Id); // Get the specific Activity from the database
+
+                _mapper.Map(request.Activity, activity); // Now map the request Activity onto the request activity to get the changes. 
+
+                await _context.SaveChangesAsync(); // Now save those changes
+
+                return Unit.Value;
+
+            }
+        }
+```
+
+<br/>
 ## <strong>Adding a Delete Handler</strong>
 
 Commands don't return anything
@@ -524,4 +596,83 @@ We created the CRUD operations
 
 How would you use a NoSQL database with our server instead? Could you use the Mediator Pattern? How would all this be implemented. 
 Different NoSQL database are MongoDB, Azure Cosmos DB, Cassandra, RavenDB, CouchDB, ... these might be interesting. 
+
+## <strong>Continuing Our Countries Endpoint</strong>
+
+<div class="textBlurb">
+Continuing our countries example from the first part of this app, we are going to add the mediator pattern to it, and test it out. If you decided to make some other endpoint, do it your own way and try to learn by doing what you read. I think the best approact to learning is trying and tinkering with the code to really find out different ideas your might have for your own app, or a future app of your dreams. To start of with, let's rewrite the <code class="code-style">GetCountries</code> function using the mediator pattern. I have written the code below which is really just a copy of the list class you made for the Activities. Firstly though, you will create a folder in the application folder that is called <code class="code-style">Countries</code> that will house all the classes for our Countries class. Then, we will write the code. 
+</div><br/>
+
+```cs
+using Domain;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Persistence;
+
+namespace Application.Countries
+{
+    public class List
+    {
+        public class Query : IRequest<List<Country>>
+        {
+
+        }
+
+        public class Handler : IRequestHandler<Query, List<Country>>
+        {
+            private readonly DataContext _context;
+            public Handler(DataContext context)
+            {
+                _context = context;
+
+            }
+            public async Task<List<Country>> Handle(Query request, CancellationToken cancellationToken)
+            {
+                return await _context.Countries.ToListAsync();
+            }
+        }
+    }
+}
+```
+<br/>
+<div class="textBlurb">
+The crazy thing is that we don't have to add any code to our startup class. The startup class only needs the type from one of our classes, whether it is the Activities List.cs class or any other class that implements this IRequest, and IRequestHandler type pattern we are seeing and the magic will happen. We are starting off with just the easy GET request, so go ahead and comment out the rest of your class code, and just focus on this request in your controller, and then test it out in Postman.  
+</div><br/>
+
+```cs 
+namespace API.Controllers
+{
+    public class CountriesController : BaseController
+    {
+        
+
+        [HttpGet] // api/Countries
+        public async Task<ActionResult<List<Country>>> GetCountries()
+        {
+            return await Mediator.Send(new List.Query());
+        }
+
+        // [HttpGet("{id}")] //api/Activities/{id}
+        // public async Task<ActionResult<Country>> GetCountry(Guid id)
+        // {
+        //     return await _context.Countries.FindAsync(id);
+        // }
+
+
+        // [HttpGet("speak/{language}")] //api/Countries/{languages}
+        // public async Task<ActionResult<List<Country>>> GetCountriesThatSpeak(string language)
+        // {
+        //     return await _context.Countries.Where((Country country) => country.Language.ToLower() == language.ToLower()).ToListAsync();
+        // }
+    }
+}
+```
+<br/>
+
+<div class="textBlurb">
+</div>
+
+<div class="textBlurb">
+Some things that I would like to try are populating my database with data from another API so that we would have all the countries. I wonder if there is such an API that would fit our model, and then I would like to try this pattern using F#. It would be interesting if you could do such a pattern in F#. Still, my knowledge of F# is not too great right now. The branch for this specific part of the app are located <a  href="https://github.com/NathanSwindall/dotnet-tutorial/tree/crud_operations">here</a>. 
+</div>
 
