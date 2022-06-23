@@ -17,6 +17,7 @@ author: Nathan Swindall
 - [Creating our first Query handler](#creating-our-first-query-handler)
 - [Thin Controllers in API](#thin-controllers-in-api)
 
+
 ## <strong>Introduction</strong>
 
 <p class='textBlurb'>
@@ -669,8 +670,7 @@ namespace API.Controllers
 ```
 <br/>
 
-<div class="textBlurb">
-</div>
+
 
 <div class="textBlurb">
 Some things that I would like to try are populating my database with data from another API so that we would have all the countries. I wonder if there is such an API that would fit our model, and then I would like to try this pattern using F#. It would be interesting if you could do such a pattern in F#. Still, my knowledge of F# is not too great right now. The branch for this specific part of the app are located <a  href="https://github.com/NathanSwindall/dotnet-tutorial/tree/crud_operations">here</a>. 

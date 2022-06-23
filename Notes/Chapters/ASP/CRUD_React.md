@@ -16,6 +16,12 @@ author: Nathan Swindall
 - [Folder structure in React](#folder-structure-in-react)
 - [Adding an Activity Interface](#adding-an-activity-interface)
 - [Adding a Nav bar](#adding-a-nav-bar)
+- [Adding some style to the nav bar](#adding-some-style-to-the-nav-bar)
+    - [NavBar margin and fade](#navbar-margin-and-fade)
+    - [Add padding to body and reorganize](#add-padding-to-body-and-reorganize)
+- [Creating an Activity dashboard](#creating-an-activity-dashboard)
+- [Creating an activity list](#creating-an-activity-list)
+- [Creating a details view](#creating-a-details-view)
 
 
 
@@ -75,7 +81,7 @@ export interface Activity {
 You could call it IActivity.ts and go from the standards of c# if you want. 
 Now go back to the code in your App.tx file and update some areas in your code to get typesafety 
 
-```js
+```jsx
 const [activities, setActivities] = useState<Activity[]>([]); 
 
 useEffect(() => {
@@ -104,7 +110,7 @@ Now when adding Activity here, you will have type safety
 Add new file to the layout folder called NavBar.tsx
 The Container just adds padding for you
 
-```js
+```jsx
 import React from 'react';
 import { Button, Container, Menu} from 'semantic-ui-react'
 
@@ -132,7 +138,7 @@ Notice how some of the items have a closing bracket and no closing bracket.
 Now we need to add the code to our app.tsx file. 
 Just remove the Header tab and add a self closing NavBar to it like the following 
 
-```js 
+```jsx 
 return ( 
     <div>
         <NavBar />
@@ -150,8 +156,9 @@ Right now our NavBar looks kind of bad. We are going to do a few things. First w
 
 ### <strong>NavBar margin and fade</strong>
 
-In order to change the margin, we will add styles the react way. Unlike in html, we will treat the css properties like objects. Thus, we will add <code class="code-style2">style={{marginRight: '10px'}}</code> to our main code. 
-```js 
+In order to change the margin, we will add styles the react way. Unlike in html, we will treat the css properties like objects. Thus, we will add <code class="code-style2">style=marginRight: '10px'</code> to our main code. 
+{% raw %}
+```jsx
 export default function NavVar() {
     return (
         <Menu inverted fixed='top'>
@@ -167,6 +174,7 @@ export default function NavVar() {
             </Container>
         </Menu>
 ```
+{% endraw %}
 We also want to apply a nice gray background and get the fade with our css. To do this we will clear out the styles.css file in the layout folder and delete everything. Then we will add styling for the body of our app. 
 
 ```css
@@ -181,7 +189,7 @@ body {
 
 The class targeting is very confusing for this. It seems to contain the all the properties our Menu. I think it would probably be a good thing to mess around with it to get a better idea of how the linear-gradient works, and how we are targeting the specific element we are trying to style. We put the important at the end to make sure that no styles are overriding these styles. 
 
-### <strong> Add padding to body and reorganize </strong>
+### <strong>Add padding to body and reorganize</strong>
 
 <div class="tblurb">
 <h3>Problems </h3>
@@ -193,15 +201,14 @@ The class targeting is very confusing for this. It seems to contain the all the 
 <h3>Instructions</h3>
 
 <ul>
-<li>Add a Container component around our List component for padding in our App.tsx file</li>
+<li>Add a Container component around our List component for padding in our App.tsx file. Add some style to it for padding</li>
 <li>Erase the div element that surrounds all this and add a Framgment component or <></li>
-</ul>
-</div>
+<div  markdown=1 >
 
-<br/>
-```cs
+{% raw %}
+```jsx
 return (
-    <div>
+    <>
         <NavBar />>
         <Container style={{marginTop: '7em'}}>
             <List> 
@@ -212,16 +219,27 @@ return (
                 ))}
             </List>
         </Container>
-    </div>
+    <>
 )
+
 ```
+{% endraw %}
 
-### <strong> Creating an Activity dashboard </strong>
+</div>
+</ul>
+</div>
 
-<div class="tblurb">
+<br/>
+
+
+
+
+### <strong>Creating an Activity dashboard</strong>
+
+<div class="tblurb" markdown=1>
 <h3>Problems </h3>
 <ul>
-<li>Create a new component called that will hold our activities List that we made earlier in our App.tsx</li>
+<li>Create a new component called ActivityDashboard that will hold our activities List that we made earlier in our App.tsx</li>
 <li><strong>Passing Props</strong></li>
 </ul>
 
@@ -233,18 +251,8 @@ return (
     <ul>
     <li>Notice the capitalization of the component and folder structure</li>
     </ul>
-<li>Write out the basic template for the component (Fig 1)</li>
-<li>Add Grid component in order to make grids and then add a column with a width of '10'</li>
-<li>Paste the List part of the App.tsx into the grid column part and delete the list from App.txs(Fig 2)</li>
-<li>Add the ActivityDashboard componenet to our App.txs file with activities as a property and holding the activities we get from state (Fig 3)</li>
-<li>We will get an error saying our ActivityDashboard does not have intrinsic properties for activites</li>
-<li>To get rid of this we need to work with Props. Thus add a props interface to the ActivityDashboard file with an "activities: Activity[]" field</li>
-<li>Add the destructed Prop object as a parameter to our ActivityDashboard component (Fig 4)</li>
-</ul>
-</div>
-<br/>
-
-<strong>Fig 1 ActivityDashboard.tsx</strong>
+<li>Write out the basic template for the component
+<div  markdown=1 >
 
 ```jsx
 import React from 'react';
@@ -255,9 +263,13 @@ export default function ActivityDashboard() {
     )
 }
 ```
+</div>
+</li>
+<li>Add Grid component in order to make grids and then add a column with a width of '10'</li>
+<li>Paste the List part of the App.tsx into the grid column part and delete the list from App.txs 
 
 
-<strong>Fig 2 ActivityDashboard.tsx</strong>
+<div  markdown=1 >
 
 ```jsx
 import React from 'react';
@@ -266,7 +278,7 @@ import {Grid, List} from 'semantic-ui-react';
 export default function ActivityDashboard() {
     return (
         <Grid>
-            <Grid.column width="10">
+            <Grid.Column width="10">
                 <List> 
                     {activities.map(activity => (
                         <List.Item key={activity.id}>
@@ -279,20 +291,32 @@ export default function ActivityDashboard() {
     )
 }
 ```
+</div>
 
-<strong>Fig 3 App.tsx</strong>
+
+</li>
+<li>Add the ActivityDashboard component to our App.txs file with activities as a property and holding the activities we get from State
+
+
+<div  markdown=1 >
+
 ```jsx
 return (
     <>
         <NavBar />
-        <Container style={{marginTop: '7em'}}>
+        <Container style=>
             <ActivityDashboard acitivities={activities}>
         </Container>
     <>
 )
 ```
+</div>
+</li>
+<li>We will get an error saying our ActivityDashboard does not have intrinsic properties for activities</li>
+<li>To get rid of this we need to work with Props. Thus add a props interface to the ActivityDashboard file with an "activities: Activity[]" field</li>
+<li>Add the destructed Prop object as a parameter to our ActivityDashboard component
 
-<strong>Fig 4 ActivityDashboard.tsx</strong>
+<div  markdown=1 >
 
 ```jsx
 import React from 'react';
@@ -306,7 +330,7 @@ interface Props {
 export default function ActivityDashboard({activities}: Props) {
     return (
         <Grid>
-            <Grid.column width="10">
+            <Grid.Column width="10">
                 <List> 
                     {activities.map(activity => (
                         <List.Item key={activity.id}>
@@ -319,6 +343,13 @@ export default function ActivityDashboard({activities}: Props) {
     )
 }
 ```
+</div>
+</li>
+</ul>
+</div>
+<br/>
+
+
 
 ## <Strong>Creating an activity list</strong>
 
@@ -333,27 +364,183 @@ export default function ActivityDashboard({activities}: Props) {
 <h3>Instructions</h3>
 
 <ul>
-<li>Create a new component in the dashboard folder call ActivityList </li>
-<li>We are going to pass the props down another level, so we will need a props interface on the normal template that has activities</li>
+<li>Create a new component in the dashboard folder called ActivityList 
+<div  markdown=1 >
+
+{% raw %}
+```jsx
+import React from 'react';
+
+export default function ActivityList(){
+    return (
+
+    )
+}
+```
+{% endraw %}
+</div>
+
+</li>
+
+<li>We are going to pass the props down another level, so we will need a props interface on the normal template that has activities
     <ul>
     <li>Notice the capitalization of the component and folder structure</li>
     </ul>
-<li>The first component in this component will be a Segment componet. Make sure to brink it in with SemanitUi</li>
-<li>Add Grid component in order to make grids and then add a column with a width of '10'</li>
-<li>Paste the List part of the App.tsx into the grid column part and delete the list from App.txs(Fig 2)</li>
-<li>Add the ActivityDashboard componenet to our App.txs file with activities as a property and holding the activities we get from state (Fig 3)</li>
-<li>We will get an error saying our ActivityDashboard does not have intrinsic properties for activites</li>
-<li>To get rid of this we need to work with Props. Thus add a props interface to the ActivityDashboard file with an "activities: Activity[]" field</li>
-<li>Add the destructed Prop object as a parameter to our ActivityDashboard component (Fig 4)</li>
+
+<div  markdown=1 >
+
+{% raw %}
+```jsx
+import React from 'react';
+import { Activity } from '../../../app/models/activity'
+
+interface Props {
+    activities: Activity[]
+}
+
+export default function ActivityList({activities}: Props){ // destructure the Props interfaces. It has type Props
+    return (
+
+    )
+}
+```
+{% endraw %}
+</div>
+
+
+</li>
+
+<li>The first component in this component will be a Segment component. Make sure to bring it in with SemantictUi. This will give us some padding and background color</li>
+<li>We are going to be creating a card which is a Item.Group of items that will display each one of our activities very nicely</li>
+<li>So in the Segment tag, add an Item.Group tag with a divided attribute that will add a horizontal line between each item</li>
+<li>Now go ahead and map over the activities array and put each activity in an Item tag. Remember that React needs a unique key when iterating over items so make the key attribute equal to the activity.id
+<div  markdown=1 >
+
+{% raw %}
+```jsx
+import React from 'react';
+import { Item, Segment } from 'semantic-ui-react'
+import { Activity } from '../../../app/models/activity'
+
+interface Props {
+    activities: Activity[]
+}
+
+export default function ActivityList({activities}: Props){ // destructure the Props interfaces. It has type Props
+    return (
+        <Segment>
+            <Item.Group divided>
+                {activities.map(activity => (
+                    <Item key={activity.id}>
+                    </Item>
+                ))}
+            </Item.Group>
+        </Segment>
+    )
+}
+```
+{% endraw %}
+</div>
+
+
+</li>
+<li>Next we will make the content for the item tag. So go ahead and add an Item.Content tag</li>
+<li>We are going to add an Item.Header tag, an Item.Meta tag, and an Item.Description tag that will have the information that we got from the API
+   <ul>
+        <li>The <code class="code-style2">as='a'</code> will make the header tag act as a link</li>
+    </ul>
+ 
+<div  markdown=1 >
+
+{% raw %}
+```jsx
+import React from 'react';
+import { Item, Segment } from 'semantic-ui-react'
+import { Activity } from '../../../app/models/activity'
+
+interface Props {
+    activities: Activity[]
+}
+
+export default function ActivityList({activities}: Props){ 
+    return (
+        <Segment>
+            <Item.Group divided>
+                {activities.map(activity => (
+                    <Item key={activity.id}>
+                        <Item.Content>
+                            <Item.Header as='a'>{activity.title}</Item.Header>
+                            <Item.Meta>{activity.date}</Item.Meta>
+                            <Item.Description>
+                                <div>{activity.description}</div>
+                                <div>{activity.city}, {actvity.venue}
+                            </Item.Description>
+                    </Item>
+                ))}
+            </Item.Group>
+        </Segment>
+    )
+}
+```
+{% endraw %}
+</div>
+
+
+</li>
+<li>Add another tag below the Item.Description tag called Item.Extra</li>
+<li>Now we are going to add a Button and Label. The button will be floated right. The name of the button will be "View" which is done by the contents attribute, and the color of the button will be blue. The label will be a basic label and the content (name of the item) will be the activity.category
+
+<div  markdown=1 >
+
+{% raw %}
+```jsx
+import React from 'react';
+import { Item, Segment, Button, Label } from 'semantic-ui-react'
+import { Activity } from '../../../app/models/activity'
+
+interface Props {
+    activities: Activity[]
+}
+
+export default function ActivityList({activities}: Props){ 
+    return (
+        <Segment>
+            <Item.Group divided>
+                {activities.map(activity => (
+                    <Item key={activity.id}>
+                        <Item.Content>
+                            <Item.Header as='a'>{activity.title}</Item.Header>
+                            <Item.Meta>{activity.date}</Item.Meta>
+                            <Item.Description>
+                                <div>{activity.description}</div>
+                                <div>{activity.city}, {actvity.venue} </div>
+                            </Item.Description>
+                            <Item.Extra>
+                                <Button floated='right' content='View' color='blue'>
+                                <Label basic content={activity.category}>
+                            </Item.Extra>
+                    </Item>
+                ))}
+            </Item.Group>
+        </Segment>
+    )
+}
+```
+{% endraw %}
+</div>
+
+
+</li>
+<li>Now go back to the ActivityDashboard.tsx file and delete everything between the Grid.Column component and then add the new ActivityList component that you made. Also, pat yourself on the back</li>
 </ul>
 </div>
 <br/>
 
 
-<div class="tblurb" markdown=1 >
+<div  markdown=1 >
 
 This is going to be really radical that we are doing all this <br/>
-
+{% raw %}
 ```jsx
 return (
     <>
@@ -364,20 +551,14 @@ return (
     <>
 )
 ```
-
+{% endraw %}
 </div>
 
-<span class="tBlurb">
+<code class="code-style2">style=marginRight: '10px'</code>
 
 
-```jsx
-return (
-    <>
-        <NavBar />
-        <Container style={{marginTop: '7em'}}>
-            <ActivityDashboard acitivities={activities}>
-        </Container>
-    <>
-)
-```
-</span>
+
+
+
+
+## <strong>Creating a details view<strong>
