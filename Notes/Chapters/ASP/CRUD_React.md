@@ -82,25 +82,29 @@ You could call it IActivity.ts and go from the standards of c# if you want.
 Now go back to the code in your App.tx file and update some areas in your code to get typesafety 
 
 ```jsx
-const [activities, setActivities] = useState<Activity[]>([]); 
+function App() {
+    const [activities, setActivities] = useState<Activity[]>([]); 
 
-useEffect(() => {
-    axios.get<Activity>('http://localhost:500/api/activities').then( response => {
-        setActivities(response.data)
-    })
-})
+    useEffect(() => {
+        axios.get<Activity>('http://localhost:500/api/activities').then( response => {
+            setActivities(response.data)
+        })
+    }, [])
 
-return (
-    <div>
-        <Header as='h2' icon='user' content='Reactivities' />
+    return (
+        <div>
+            <Header as='h2' icon='user' content='Reactivities' />
 
-        <List> 
-        {activities.map(activity -> (
-            <List.Item key={activity.id}>
-                {activity.title}
-            </List.Item>
-        ))}
-)
+            <List> 
+            {activities.map(activity -> (
+                <List.Item key={activity.id}>
+                    {activity.title}
+                </List.Item>
+            ))}
+            </List>
+        </div>
+    );
+}
 ```
 
 Now when adding Activity here, you will have type safety 
@@ -126,7 +130,7 @@ export default function NavVar() {
                     <Button positive content="Create Activity" />
                 <Menu.Item>
             </Container>
-        </Menut>
+        </Menu>
     )
 }
 ```
