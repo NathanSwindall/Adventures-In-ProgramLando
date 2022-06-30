@@ -21,7 +21,15 @@ author: Nathan Swindall
     - [Add padding to body and reorganize](#add-padding-to-body-and-reorganize)
 - [Creating an Activity dashboard](#creating-an-activity-dashboard)
 - [Creating an activity list](#creating-an-activity-list)
-- [Creating a details view](#creating-a-details-view)
+- [Creating a Details View](#creating-a-details-view)
+- [Creating an Activity Form](#creating-an-activity-from)
+- [Selecting an Activity to View](#selecting-an-activity-to-view)
+- [Displaying the Create/Edit Form](#displaying-the-create-edit-form)
+- [Editing an Activity and From Basics in React](#editing-an-activity-and-form-basics-in-react)
+- [Handle Create and Edit Submissions](#handle-create-and-edit-form-submissions)
+- [Using a GUID From the Activity Id](#using-a-guid-from-the-activity-id)
+- [Deleting an Activity](#deleting-an-activity)
+
 
 
 
@@ -541,28 +549,294 @@ export default function ActivityList({activities}: Props){
 <br/>
 
 
-<div  markdown=1 >
 
-This is going to be really radical that we are doing all this <br/>
-{% raw %}
+
+
+
+<div class="gradient">
+	<h2 class="section__title" id="creating-a-details-view"><strong>Creating a details View</strong></h2>
+<div class="tblurb"  markdown=1>
+
+<h3>Problems </h3>
+<ul>
+<li>Create a details card next to our dashboard</li>
+</ul>
+
+<h3>Instructions</h3>
+<ul>
+<li>Create a new folder in the activities folder call details. This is where we will put a new component called ActivityDetails.tsx</li>
+<li>Create a new template for it
+
+<div markdown=1>
+
 ```jsx
-return (
-    <>
-        <NavBar />
-        <Container style={{marginTop: '7em'}}>
-            <ActivityDashboard acitivities={activities}>
-        </Container>
-    <>
-)
+import React from 'react';
+
+export default function ActivityDetails(){
+
+}
 ```
-{% endraw %}
 </div>
 
-<code class="code-style2">style=marginRight: '10px'</code>
+</li>
+<li> We are going to be using the Card template from the website, so you can just go ahead and take the code from it which is the following. 
+
+<div markdown=1>
+
+```jsx
+<Card>
+    <Image src='/images/avatar/large/matthew.png' wrapped ui={false} />
+    <Card.Content>
+      <Card.Header>Matthew</Card.Header>
+      <Card.Meta>
+        <span className='date'>Joined in 2015</span>
+      </Card.Meta>
+      <Card.Description>
+        Matthew is a musician living in Nashville.
+      </Card.Description>
+    </Card.Content>
+    <Card.Content extra>
+      <a>
+        <Icon name='user' />
+        22 Friends
+      </a>
+    </Card.Content>
+  </Card>
+)
+```
+
+</div>
+
+
+</li>
+<li> Then we are going to change a bunch of properties and add a props interface in order to have the card pull correctly from our api 
+
+<div markdown=1>
+
+```jsx
+import { Card, Icon, Image} from 'semantic-ui-react';
+import { Activity} from '../../../app/models/activity';
+
+interface Props {
+    activity: Activity
+}
+
+export default function ActivityDetails({activity}: Props) {
+    return (
+        <Card fluid>
+            <IMage src={'/assets/categoryImages/${activity.category}.jpg'}>
+            <Card.Content>
+                <Card.Header>{activity.title}</Card.Header>
+                <Card.Meta>
+                    <span>{activity.date}</span>
+                </Card.Meta>
+                <Card.Description>
+                    {activity.description}
+                </Card.Description>
+            <Card.Content extra>
+                <Button.Group widths='2'>
+                    <Button basic color='blue' content='Edit'>
+                    <Button basic color='grey' content='Cancel'>
+                </Button.Group>
+            </Card.Content>
+        </Card>
+    )
+}
+```
+
+</div>
+</li>
+<li>Now we are going to add another Grid.Column to our ActivityDashboard
+
+<div markdown=1>
+
+```jsx
+export default function ActivityDashboard({activities}: Props){
+    return (
+        <Grid>
+            <Grid.Column width='10'>
+                <ActivityList activities={activities}>
+            </Grid.Column>
+            <Grid.Column width='6'>
+                {activities[0] && 
+                <ActivityDetails activity={activities[0]}>}
+            </Grid.Column>
+        </Grid>
+    )
+}
+```
+
+</div>
+
+</li>
+</ul>
+
+<h3>Notes</h3>
+There are few things that we have learned from this section. First, we learned we can just take code from the semantic-ui website and use it in our own app. This is always allowable. Sometimes, are person might now understand all the code that is inside a module, but it's good to abstract certain concepts out. A lot of the code is pretty self-explanatory luckily and the documentation is always there if you need it. We are once again using the deconstruction of the Props object in the function declaration. Try removing the keyword <code class="code-style2">fluid</code> in the Card part to see what it does. It just makes the details expand to a bigger size which is what we want. There is also the special back ticks used in the src of the Image tag that will allow us to use javascript in the string construction. We have to hard code <code class="code-style2">activities[0]</code> right now, but we will come back to this in the future. 
+
+
+</div>
+</div><br/>
+
+
+<div class="gradient">
+	<h2 class="section__title" id="creating-an-activity-from"><strong>Creating an Activity Form</strong></h2>
+<div class="tblurb"  markdown=1>
+
+<h3>Problems </h3>
+<ul>
+<li>Create an activity from below the details view</li>
+</ul>
+
+<h3>Instructions</h3>
+<ul>
+<li>Create a new folder in the activities folder called from and add a file to this folder called ActivityForm.tsx</li>
+<li>Add the typical react boiler plate code 
+
+
+</li>
+<li>Create a new template for it</li>
+</ul>
+
+</div>
+</div><br/>
+
+
+
+<div class="gradient">
+	<h2 class="section__title" id="selecting-an-activity-to-view"><strong>Selecting an Activity to View</strong></h2>
+<div class="tblurb"  markdown=1>
+
+<h3>Problems </h3>
+<ul>
+<li>Create a details card next to our dashboard</li>
+</ul>
+
+<h3>Instructions</h3>
+<ul>
+<li>Create a new folder in the activities folder call details. This is where we will put a new component called ActivityDetails.tsx</li>
+<li>Create a new template for it</li>
+</ul>
+
+</div>
+</div><br/>
+
+
+
+<div class="gradient">
+	<h2 class="section__title" id="displaying-the-create-edit-form"><strong>Displaying the Create/Edit Form</strong></h2>
+<div class="tblurb"  markdown=1>
+
+<h3>Problems </h3>
+<ul>
+<li>Create a details card next to our dashboard</li>
+</ul>
+
+<h3>Instructions</h3>
+<ul>
+<li>Create a new folder in the activities folder call details. This is where we will put a new component called ActivityDetails.tsx</li>
+<li>Create a new template for it</li>
+</ul>
+
+</div>
+</div><br/>
+
+
+
+<div class="gradient">
+	<h2 class="section__title" id="editing-an-activity-and-form-basics-in-react"><strong>Editing an Activity and From Basics in React</strong></h2>
+<div class="tblurb"  markdown=1>
+
+<h3>Problems </h3>
+<ul>
+<li>Create a details card next to our dashboard</li>
+</ul>
+
+<h3>Instructions</h3>
+<ul>
+<li>Create a new folder in the activities folder call details. This is where we will put a new component called ActivityDetails.tsx</li>
+<li>Create a new template for it</li>
+</ul>
+
+</div>
+</div><br/>
+
+
+<div class="gradient">
+	<h2 class="section__title" id="handle-create-and-edit-form-submissions"><strong>Handle Create and Edit Submissions</strong></h2>
+<div class="tblurb"  markdown=1>
+
+<h3>Problems </h3>
+<ul>
+<li>Create a details card next to our dashboard</li>
+</ul>
+
+<h3>Instructions</h3>
+<ul>
+<li>Create a new folder in the activities folder call details. This is where we will put a new component called ActivityDetails.tsx</li>
+<li>Create a new template for it</li>
+</ul>
+
+</div>
+</div><br/>
+
+
+
+
+
+<div class="gradient">
+	<h2 class="section__title" id="using-a-guid-from-the-activity-id"><strong>Using a GUID From the Activity Id</strong></h2>
+<div class="tblurb"  markdown=1>
+
+<h3>Problems </h3>
+<ul>
+<li>Create a details card next to our dashboard</li>
+</ul>
+
+<h3>Instructions</h3>
+<ul>
+<li>Create a new folder in the activities folder call details. This is where we will put a new component called ActivityDetails.tsx</li>
+<li>Create a new template for it</li>
+</ul>
+
+</div>
+</div><br/>
+
+
+
+<div class="gradient">
+	<h2 class="section__title" id="deleting-an-activity"><strong>Deleting an Activity</strong></h2>
+<div class="tblurb"  markdown=1>
+
+<h3>Problems </h3>
+<ul>
+<li>Create a details card next to our dashboard</li>
+</ul>
+
+<h3>Instructions</h3>
+<ul>
+<li>Create a new folder in the activities folder call details. This is where we will put a new component called ActivityDetails.tsx</li>
+<li>Create a new template for it</li>
+</ul>
+
+</div>
+</div><br/>
 
 
 
 
 
 
-## <strong>Creating a details view<strong>
+
+
+
+
+
+
+
+
+
+
+
+
+
