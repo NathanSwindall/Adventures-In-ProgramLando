@@ -655,11 +655,11 @@ export default function ActivityDashboard({activities}: Props){
     return (
         <Grid>
             <Grid.Column width='10'>
-                <ActivityList activities={activities}>
+                <ActivityList activities={activities} />
             </Grid.Column>
             <Grid.Column width='6'>
                 {activities[0] && 
-                <ActivityDetails activity={activities[0]}>}
+                <ActivityDetails activity={activities[0]} />}
             </Grid.Column>
         </Grid>
     )
@@ -683,20 +683,61 @@ There are few things that we have learned from this section. First, we learned w
 	<h2 class="section__title" id="creating-an-activity-from"><strong>Creating an Activity Form</strong></h2>
 <div class="tblurb"  markdown=1>
 
-<h3>Problems </h3>
-<ul>
-<li>Create an activity from below the details view</li>
-</ul>
 
-<h3>Instructions</h3>
-<ul>
-<li>Create a new folder in the activities folder called from and add a file to this folder called ActivityForm.tsx</li>
-<li>Add the typical react boiler plate code 
+### Problems 
 
+- We want to create an activity form so that the user can edit the data for the Activity 
 
-</li>
-<li>Create a new template for it</li>
-</ul>
+### Instructions 
+
+- First we are going to create a new folder in the activities folder called form 
+- Create a new file in that new folder called ActivityForm.tsx 
+- We are creating a new component so we will need the following code. 
+
+```jsx 
+import React from 'react';
+import {Button, Form, Segment } from 'semantic-ui-react';
+
+export default function ActivityForm() {
+    return (
+        <Segment>
+            <Form.Input placeholder='Title' />
+            <Form.TextArea placeholder='Description' />
+            <Form.Input placeholder='Category' />
+            <Form.Input placeholder='Date' />
+            <Form.Input placeholder='City' />
+            <Form.Input placeholder='Venue' />
+            <Button floated="right" positive type='submit' content="Submit" />
+            <Button floated="right" type='button' content="Cancel" />
+        </Segment>
+    )
+}
+```
+- Now add the ActivityForm component below the ActivityDetails component on the ActivityDashboard component. Remember that you will need to import the activity form too. 
+
+```jsx
+export default function ActivityDashboard({activities}: Props){
+    return (
+        <Grid>
+            <Grid.Column width='10'>
+                <ActivityList activities={activities} />
+            </Grid.Column>
+            <Grid.Column width='6'>
+                {activities[0] && 
+                <ActivityDetails activity={activities[0]} />}
+                <ActivityFrom /> 
+            </Grid.Column>
+        </Grid>
+    )
+}
+```
+- There is one problem and that is that our buttons have popped out of the segment. We can fix that by adding 'clearing to the top segment part 
+
+```jsx
+export default function Activity() {
+    return (
+        <Segment clearing>
+```
 
 </div>
 </div><br/>
@@ -707,16 +748,168 @@ There are few things that we have learned from this section. First, we learned w
 	<h2 class="section__title" id="selecting-an-activity-to-view"><strong>Selecting an Activity to View</strong></h2>
 <div class="tblurb"  markdown=1>
 
-<h3>Problems </h3>
-<ul>
-<li>Create a details card next to our dashboard</li>
-</ul>
+### Problems 
 
-<h3>Instructions</h3>
-<ul>
-<li>Create a new folder in the activities folder call details. This is where we will put a new component called ActivityDetails.tsx</li>
-<li>Create a new template for it</li>
-</ul>
+- When we click view activity, it unfortunately does not work
+- Working with passing functions and updating interfaces in typescript 
+
+### Instructions 
+
+- In our App.txs file we are going to create some new properties. Remember that App.txs is at the top so we can pass everything down from there. The state will be initially undefined because we don't have any activity chosen currently. Maybe another design would always chose the first activity, but what happens if you don't have any activities for a user. We will have to make sure that the UseState can be either an Activity or undefined. We can do this by using the \| operator.  
+
+```jsx 
+const [activities, setActivities] = use<Activity []>([]);
+const [selectedActivity, setSelectedActivity] = useState<Activity | undefined >(undefined)
+```
+
+- Make two functions called handleSelectedActivity and handleCancelSelectActivity. We will pass these function as props to other components in our system. Remember that the state arrays included a setter function which is 'setSelectedActivity in this case and for a cancel one went want to set it as undefined. 
+
+```jsx 
+function handleSelectActivity(id: string ) {
+    setSelectedActivity(activities.find(x => x.id === id))
+}
+
+function handleCancelSelectActivity() {
+    setSelectedActivity(undefined);
+}
+```
+
+- See how we are passing activities into the 'handleSelectedActivity' function. It will take an id that we can use to find in our activities array. 
+- Now let's pass these as props in our ActivityDashboard component. 
+
+```jsx 
+<ActivityDashboard
+    activities={activities}
+    selectedActivity={selectedActivity}
+    selectActivity={handleSelectActivity}
+    cancelSelectActivity={handleCancelSelectActivity}
+    />
+```
+
+- Notice how we are passing the functions. We are not using the '()' parentheses version. You will get can error here because the props are not in our Dashboard interface. We need to go change that in our dashboard. 
+
+```jsx
+interface Props {
+    activities: Activity[];
+    selectedActivity: Activity;
+    selectActivity: (id: string) => void; 
+    cancelSelectActivity: () => void;
+}
+```
+
+- Notice that for these props that we added a function type signature for two of them because we are passing a function. Now let's edit the Activity Dashboard component to pass these props. 
+
+```jsx
+export default function ActivityDashboard({activities, selectedActivity // new code
+                selectActivity, cancelSelectActivity}: Props){
+    return (
+        <Grid>
+            <Grid.Column width='10'>
+                <ActivityList activities={activities}
+                              selectActivity={selectActivity} // new code
+                              />
+            </Grid.Column>
+            <Grid.Column width='6'>
+                {selectedActivity &&   // new code
+                <ActivityDetails activity={selectedActivity}  // new code
+                                 cancelSelectActivity={cancelSelectActivity} // new code
+                                 />} // new code
+                <ActivityFrom /> 
+            </Grid.Column>
+        </Grid>
+    )
+}
+```
+- We will once again get a few errors, but for different components this time which are the ActivityList component and ActivityDetails component and we will need to edit their interfaces. We will start with the ActivityList component. We can press f12 to get to that component. It will have the same signature we gave it in the ActivityDashboard
+
+```jsx
+// For ActivityList
+interface Props {
+    activities: Activity[];
+    selectActivity: (id: string) => void; 
+}
+```
+
+- We can use the selectActivity now in the ActivityList component. We are going to deconstruct it in the function parameters and then add it to a button for a onClick event so that by clicking the button we can set the activity. 
+
+```jsx
+export default function ActivityList({activities, selectActivity }: Props){  // added new code here
+    return (
+        <Segment>
+            <Item.Group divided>
+                {activities.map(activity => (
+                    <Item key={activity.id}>
+                        <Item.Content>
+                            <Item.Header as='a'>{activity.title}</Item.Header>
+                            <Item.Meta>{activity.date}</Item.Meta>
+                            <Item.Description>
+                                <div>{activity.description}</div>
+                                <div>{activity.city}, {actvity.venue} </div>
+                            </Item.Description>
+                            <Item.Extra>
+                                <Button onClick={() => selectActivity(activity.id)} floated='right' content='View' color='blue'> // added new code here
+                                <Label basic content={activity.category}>
+                            </Item.Extra>
+                    </Item>
+                ))}
+            </Item.Group>
+        </Segment>
+    )
+}
+```
+
+- Notice that for the button we had to wrap the function into an arrow function with now argument. This is because if we hadn't done that, the function would have been called on being rendered. Make sure that whenever you do this that your function are being called on render. 
+
+- Now, let's fix the ActivityDetails component. First we need to fix the interface for it. 
+
+```jsx
+interface Props {
+    activity: Activity;
+    cancelSelectActivity: () => void; // new code
+}
+```
+
+- Now let's add the onclick to the main part of the code in the ActivityDashboard component. 
+
+
+```jsx
+
+export default function ActivityDetails({activity}: Props) {
+    return (
+        <Card fluid>
+            <IMage src={'/assets/categoryImages/${activity.category}.jpg'}>
+            <Card.Content>
+                <Card.Header>{activity.title}</Card.Header>
+                <Card.Meta>
+                    <span>{activity.date}</span>
+                </Card.Meta>
+                <Card.Description>
+                    {activity.description}
+                </Card.Description>
+            <Card.Content extra>
+                <Button.Group widths='2'>
+                    <Button basic color='blue' content='Edit'>
+                    <Button onClick={cancelSelectActivity} basic color='grey' content='Cancel'> // new code
+                </Button.Group>
+            </Card.Content>
+        </Card>
+    )
+}
+```
+
+- We don't need to use the parentheses here because we don't have any parameters. It will not execute the function on being rendered. 
+- Still when we try to run the app, we will not have a working app. This is because we have a type problem in our ActivityDashboard component. We need to change the interface to be able to handle undefined. 
+
+
+```jsx
+interface Props {
+    activities: Activity[];
+    selectedActivity: Activity | undefined; // new code
+    selectActivity: (id: string) => void; 
+    cancelSelectActivity: () => void;
+}
+```
+
 
 </div>
 </div><br/>
@@ -727,16 +920,238 @@ There are few things that we have learned from this section. First, we learned w
 	<h2 class="section__title" id="displaying-the-create-edit-form"><strong>Displaying the Create/Edit Form</strong></h2>
 <div class="tblurb"  markdown=1>
 
-<h3>Problems </h3>
-<ul>
-<li>Create a details card next to our dashboard</li>
-</ul>
+### Problems 
 
-<h3>Instructions</h3>
-<ul>
-<li>Create a new folder in the activities folder call details. This is where we will put a new component called ActivityDetails.tsx</li>
-<li>Create a new template for it</li>
-</ul>
+- Open a blank fill-in Activity form when we click the Create Activity button on the NavBar
+- When we click edit on the Activity view, we want to close the activity view and just have the fill-in form 
+
+### Instructions
+
+- Start in the App.tsx component and add the following new state and handlers 
+
+```jsx 
+const [editMode, setEditMode] = useState(false);  // new code
+
+function handleSelectActivity(id: string ) {
+    setSelectedActivity(activities.find(x => x.id === id))
+}
+
+function handleCancelSelectActivity() {
+    setSelectedActivity(undefined);
+}
+
+function handleFormOpen(id?: string){ // new code
+    id ? handleSelectActivity(id) : handleCancelSelectActivity(); 
+    setEditMode(true)
+}
+
+function handleFormClose() {
+    setEditMode(false)
+}
+```
+
+- We don't need to say the type for the new state variable because it is inferred by our type system. 
+- The 'handleFormOpen' function will set our Activity state variable if there is an id, but if there isn't we will set our state variable to undefined. If it is already undefined then we are just setting it to undefined again. 
+- Now we are going to pass the 'handleFormOpen', 'handleFormClose', and the 'editMode' state down to our Activity Dashboard. This will make it so that we need to update our interface in it. 
+
+```jsx 
+<ActivityDashboard
+    activities={activities}
+    selectedActivity={selectedActivity}
+    selectActivity={handleSelectActivity}
+    cancelSelectActivity={handleCancelSelectActivity}
+    editMode={editMode} // new code
+    openForm={handFormOpen} // new code
+    closeForm={handleFormClose}
+    /> // new code
+```
+
+- We will get some errors telling us that we need to edit the interface in the ActivityDashboard component. Let's add our new props to the ActivityDashboard interface and to the function parameters. We don't need to make the id in the openfrom function undefined because we will expect and id always. This part confuses me a little bit. 
+
+
+```jsx
+// ActivityDashboard
+interface Props {
+    activities: Activity[];
+    selectedActivity: Activity | undefined;
+    selectActivity: (id: string) => void; 
+    cancelSelectActivity: () => void;
+    editMode: boolean; // new code 
+    openForm: (id: string) => void; // new code
+    closeForm: () => void; // new code
+
+}
+
+export default function ActivityDashboard({activities, selectedActivity, 
+        selectActivity, cancelSelectActivity, editMode, openForm, closeForm}: Props) { // new code
+```
+
+- Now we are going to pass our props once again down to the 'ActivityDetails' component and the 'ActivityForm' component
+
+
+```jsx
+// From ActivityDashboard
+export default function ActivityDashboard({activities, selectedActivity 
+                selectActivity, cancelSelectActivity, editMOde, openForm, closeForm}: Props){
+    return (
+        <Grid>
+            <Grid.Column width='10'>
+                <ActivityList activities={activities}
+                              selectActivity={selectActivity} 
+                              />
+            </Grid.Column>
+            <Grid.Column width='6'>
+                {selectedActivity &&   
+                <ActivityDetails activity={selectedActivity} 
+                                 cancelSelectActivity={cancelSelectActivity} 
+                                 openForm={openForm} // new code
+                                 />} 
+                {editMode  && // new code
+                <ActivityFrom closeForm={closeForm} actvity={SelectedActivity}/>}  // new code
+            </Grid.Column>
+        </Grid>
+    )
+}
+```
+
+- The ActivityDetails component interface and the ActivityForm interface will need to be edited for our new props 
+
+```jsx 
+// From ActivityDetails
+
+interface Props {
+    activity: Activity;
+    cancelSelectActivity: () => void; 
+    openForm: (id: string) => void; // new code
+}
+
+export default function ActivityDetails({activity, cancelSelectActivity, openForm}: Props) { // new code
+```
+
+- Now that we have access to the openForm from the top level, we can use it. 
+
+```jsx
+// From ActivityDetails
+export default function ActivityDetails({activity, cancelSelectActivity, openForm}: Props) {
+    return (
+        <Card fluid>
+            <IMage src={'/assets/categoryImages/${activity.category}.jpg'}>
+            <Card.Content>
+                <Card.Header>{activity.title}</Card.Header>
+                <Card.Meta>
+                    <span>{activity.date}</span>
+                </Card.Meta>
+                <Card.Description>
+                    {activity.description}
+                </Card.Description>
+            <Card.Content extra>
+                <Button.Group widths='2'>
+                    <Button onClick={() => openForm(activity.id)} basic color='blue' content='Edit'> // new code
+                    <Button onClick={cancelSelectActivity} basic color='grey' content='Cancel'>
+                </Button.Group>
+            </Card.Content>
+        </Card>
+    )
+}
+```
+
+- Right now, all we have done so far is make it so that our edit button will open up a form when the edit button on the ActivityDetails form is pressed. The behavior that we want is for the ActivityDetails form to also close when we press the edit button. 
+- But before we do that, we will fix the other problems with the props for the ActivityForm. We need to create an interface in that component. 
+
+```jsx
+// From ActivityForm
+interface Props = {
+    activity: Activity | undefined 
+    closeForm: () => void;
+}
+
+export default function ActivityForm({activity, closeForm}: Props) { 
+```
+
+- The activity prop can be undefined, which was stated in the previous section in this tutorial. 
+- Let's move our focus to the button on the NavBar for creating and Activity
+
+
+```jsx 
+// Form App.tx 
+
+<NavBar openForm={handleFormOpen}>
+```
+- Now we need to add another interface to our 'NavBar' component and the appropriate parameters
+
+```jsx 
+// From NavBar.tsx 
+interface Props {
+    openForm: () => void;
+}
+
+export default function NavBar({openForm}: Props) {
+    return (
+        <Menu inverted fixed ='top'>
+            <Container>
+                <Menu.Item header>
+                    <img src="/assets/logo.png" alt="logo" style={{marginRight: '10px'}}>
+                    Reactivities
+                </Menu.Item>
+                <Menu.Item name='Activities'/>
+                <Menu.Item >
+                    <Button onClick{openFrom} positive content='Create Activity'>
+                </Menu.Item>
+            </Container>
+        </Menu>
+    )
+}
+```
+
+- If we try to run the app right now, It won't exactly work because we still have some stuff to do. 
+- Let's go to the ActivityForm because we haven't added all the props. 
+
+
+```jsx 
+// From ActivityFrom
+export default function ActivityForm({activity, closeForm }) {
+    return (
+        <Segment>
+            <Form.Input placeholder='Title' />
+            <Form.TextArea placeholder='Description' />
+            <Form.Input placeholder='Category' />
+            <Form.Input placeholder='Date' />
+            <Form.Input placeholder='City' />
+            <Form.Input placeholder='Venue' />
+            <Button floated="right" positive type='submit' content="Submit" />
+            <Button onClick={closeForm} floated="right" type='button' content="Cancel" /> // new code
+        </Segment>
+    )
+}
+```
+
+- The above will fix the cancel button not working, now we want to fix the view staying open when we press the edit button. To fix this, we need to go to the ActivityDashboard activity 
+
+
+```jsx
+// From ActivityDashboard
+export default function ActivityDashboard({activities, selectedActivity 
+                selectActivity, cancelSelectActivity, editMOde, openForm, closeForm}: Props){
+    return (
+        <Grid>
+            <Grid.Column width='10'>
+                <ActivityList activities={activities}
+                              selectActivity={selectActivity} 
+                              />
+            </Grid.Column>
+            <Grid.Column width='6'>
+                {selectedActivity &&  !editMode &&
+                <ActivityDetails activity={selectedActivity} 
+                                 cancelSelectActivity={cancelSelectActivity} 
+                                 openForm={openForm} // new code
+                                 />} 
+                {editMode  && // new code
+                <ActivityFrom closeForm={closeForm} actvity={SelectedActivity}/>}  // new code
+            </Grid.Column>
+        </Grid>
+    )
+}
+```
 
 </div>
 </div><br/>
