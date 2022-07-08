@@ -701,14 +701,16 @@ import {Button, Form, Segment } from 'semantic-ui-react';
 export default function ActivityForm() {
     return (
         <Segment>
-            <Form.Input placeholder='Title' />
-            <Form.TextArea placeholder='Description' />
-            <Form.Input placeholder='Category' />
-            <Form.Input placeholder='Date' />
-            <Form.Input placeholder='City' />
-            <Form.Input placeholder='Venue' />
-            <Button floated="right" positive type='submit' content="Submit" />
-            <Button floated="right" type='button' content="Cancel" />
+            <Form>
+                <Form.Input placeholder='Title' />
+                <Form.TextArea placeholder='Description' />
+                <Form.Input placeholder='Category' />
+                <Form.Input placeholder='Date' />
+                <Form.Input placeholder='City' />
+                <Form.Input placeholder='Venue' />
+                <Button floated="right" positive type='submit' content="Submit" />
+                <Button floated="right" type='button' content="Cancel" />
+            </Form>
         </Segment>
     )
 }
@@ -1112,14 +1114,16 @@ export default function NavBar({openForm}: Props) {
 export default function ActivityForm({activity, closeForm }) {
     return (
         <Segment>
-            <Form.Input placeholder='Title' />
-            <Form.TextArea placeholder='Description' />
-            <Form.Input placeholder='Category' />
-            <Form.Input placeholder='Date' />
-            <Form.Input placeholder='City' />
-            <Form.Input placeholder='Venue' />
-            <Button floated="right" positive type='submit' content="Submit" />
-            <Button onClick={closeForm} floated="right" type='button' content="Cancel" /> // new code
+            <Form>
+                <Form.Input placeholder='Title' />
+                <Form.TextArea placeholder='Description' />
+                <Form.Input placeholder='Category' />
+                <Form.Input placeholder='Date' />
+                <Form.Input placeholder='City' />
+                <Form.Input placeholder='Venue' />
+                <Button floated="right" positive type='submit' content="Submit" />
+                <Button onClick={closeForm} floated="right" type='button' content="Cancel" /> // new code
+            </Form>
         </Segment>
     )
 }
@@ -1159,19 +1163,125 @@ export default function ActivityDashboard({activities, selectedActivity
 
 
 <div class="gradient">
-	<h2 class="section__title" id="editing-an-activity-and-form-basics-in-react"><strong>Editing an Activity and From Basics in React</strong></h2>
+	<h2 class="section__title" id="editing-an-activity-and-form-basics-in-react"><strong>Editing an Activity and Formm Basics in React</strong></h2>
 <div class="tblurb"  markdown=1>
 
-<h3>Problems </h3>
-<ul>
-<li>Create a details card next to our dashboard</li>
-</ul>
+### Problem 
 
-<h3>Instructions</h3>
-<ul>
-<li>Create a new folder in the activities folder call details. This is where we will put a new component called ActivityDetails.tsx</li>
-<li>Create a new template for it</li>
-</ul>
+- When form right now is only updating the html DOM, and not actually react state
+- Working with state in a downstream component.
+- Using an Alias for a a variable in React 
+
+### Instructions 
+
+- Add a new initial state in our form component. It will test for whether it got an activity with data passed in as a prop from a parent component. If the activity is null then we will put create an initial state. The '??' means 'if null use this'
+
+```jsx
+// from ActivityForm
+export default function ActivityForm({activity, closeForm}: Props ){
+    
+    const initialState = activity ?? {
+        id: '',
+        title: '',
+        category: '',
+        description: '',
+        date: '',
+        city: '',
+        venue: ''
+    }
+}
+```
+
+- Add a variable below that which will be an activity state variable. Our state will change for the activity when a user types in to the form. This is why we need a state variable. It will be just like adding a state variable to the App.tsx file. 
+
+```jsx 
+// From ActivityForm
+
+const [activity, setActivity] = useState(initialState) // Notice that we are using the initial state to set up our activity state
+
+return (
+    
+```
+
+- An error will now occur because we are getting a new prop variable labeled 'activity' and we are creating a state variable called 'activity'. React doesn't know which one is which, so we will have to use a new feature we haven't learned before which is using an alias. We will name the prop variable that we got from the parent component as 'selectedActivity'. 
+
+
+```jsx
+// from ActivityForm
+export default function ActivityForm({activity: selectedActivity, closeForm}: Props ){ // new code
+    
+    const initialState = selectedActivity ?? { // new code
+        id: '',
+        title: '',
+        category: '',
+        description: '',
+        date: '',
+        city: '',
+        venue: ''
+    }
+}
+```
+
+- Let's add two new handlers so tha we can finally update the state in react and not have it just updating and html dom element. The two handlers will be 'handleOnSubmit' and 'handleOnChange'. The 'handleOnSubmit' will go on the main Form component , but right now we will not write the full implementation. We will just use a console.log. The 'handleOnSubmit', we will write the full implementation.
+
+```jsx 
+// From ActivityForm 
+import React, { ChangeEvent, useState } from 'react'; // new code 
+... // just eliding some code here
+
+export default function ActivityForm({activity: selectedActivity, closeForm}: Props ){
+    
+    const initialState = selectedActivity ?? {
+        id: '',
+        title: '',
+        category: '',
+        description: '',
+        date: '',
+        city: '',
+        venue: ''
+    }
+const [activity, setActivity] = useState(initialState)
+
+function handleSubmit() {  // new function
+    console.log(activity)
+}
+
+function handleInputChange(event: ChangeEvent<HTMLInputElement>) { // new function
+    const {name, value} = event.target
+    setActivity({...activity, [name]: value}) // this is just the spread operator so that we can target certain properties on the activity object
+}
+
+
+
+return (
+    <Segment>
+        <Form onSubmit={handleSubmit} > // new code
+            <Form.Input placeholder='Title' value={activity.title} name='title' onChange={handleInputChange} />  // new code
+            <Form.TextArea placeholder='Description' value={activity.description} name='description' onChange={handleInputChange}/> // new code
+            <Form.Input placeholder='Category' value={activity.category} name='category' onChange={handleInputChange}/> // new code
+            <Form.Input placeholder='Date' value={activity.date} name='date' onChange={handleInputChange}/> // new code
+            <Form.Input placeholder='City' value={activity.city} name='city' onChange={handleInputChange}/> // new code
+            <Form.Input placeholder='Venue' value={activity.venue} name='venue' onChange={handleInputChange}/> // new code
+            <Button floated="right" positive type='submit' content="Submit" />
+            <Button onClick={closeForm} floated="right" type='button' content="Cancel" /> // new code
+        </Form>
+    </Segment>
+)
+```
+- Notice that we are using the fields name and value on the different From elements. The value is what should be in the input boxes. We are also using the spread operator in the 'handleInputChange' function which is just an easy way of changing properties on a certain object. 
+
+- Everything is pretty much done except that we need to change the type of our function 'handleInputChange`. This is because one of our values is a different type. We need to change the HTMLInputElement an or type with HTMLTextAreaElement
+
+```jsx 
+function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement >) { // new function
+    const {name, value} = event.target
+    setActivity({...activity, [name]: value}) 
+}
+
+```
+
+
+` Now test out the code to make sure you don't have any errors
 
 </div>
 </div><br/>
@@ -1181,16 +1291,115 @@ export default function ActivityDashboard({activities, selectedActivity
 	<h2 class="section__title" id="handle-create-and-edit-form-submissions"><strong>Handle Create and Edit Submissions</strong></h2>
 <div class="tblurb"  markdown=1>
 
-<h3>Problems </h3>
-<ul>
-<li>Create a details card next to our dashboard</li>
-</ul>
+### Problems 
 
-<h3>Instructions</h3>
-<ul>
-<li>Create a new folder in the activities folder call details. This is where we will put a new component called ActivityDetails.tsx</li>
-<li>Create a new template for it</li>
-</ul>
+- The current 'handleOnSubmit function is just a console.log function and doesn't actually update our react dom. 
+- Create a function that will update our dom and allow us to edit the activities 
+
+### Instructions 
+
+- In the App.tsx file create a new handler function called 'HandleCreateOrEditActivity' below the other activities. This is quite a lot and we will be changing it shortly, but for now, we will use this. 
+
+```jsx 
+// From App.tsx 
+
+function handleCreateOrEditActivity(activity: Activity){ // This function will be used with on Submit
+    // check if we have an activity id
+    activity.id 
+        ? setActivities([...activities.filter(x => x.id !== activity.id), activity])
+        : setActivities([...activities, activity])
+    setEditMode(false); // we are done editing the activity so we can turn off edit mode
+    setSelectedActivity(actvity) // set current activityDetails to this activity
+}
+```
+
+- The spread operator (...) is a little confusing. I will give an example to help better understand it. Let's say we had the following terminal session in the browser
+
+```jsx 
+> let activities = [{id : 1, a:1}, {id :2, a :2}, {id : 3, a : 1}, {id :4, a : 2}]
+> let activity = {id: 4, a: 1000}
+
+> let filteredActivities = activities.filter(x => x.id !== activity.id)
+< [{id : 1, a:1}, {id :2, a :2}, {id : 3, a : 1}]
+// notice it is a way of getting rid of the id that matches the activity id. So now are array doesn't have an element with that id 
+
+> [...activities.filter(x => x.id !== activity.id), activity]
+< [{id : 1, a:1}, {id :2, a :2}, {id : 3, a : 1}, {id :4, a : 1000}]
+// you can see that the operation just changed the element with id 4 to be included on the array and it removed the old element with id 4
+```
+
+- Pass down the function all the way to our ActivityForm.tsx
+
+```jsx
+// From App.tsx 
+<ActivityDashboard
+    activities={activities}
+    selectedActivity={selectedActivity}
+    selectActivity={handleSelectActivity}
+    cancelSelectActivity={handleCancelSelectActivity}
+    editMode={editMode} 
+    openForm={handFormOpen} 
+    closeForm={handleFormClose}
+    createOrEdit={handleCreateOrEditActivity}
+    /> 
+
+```
+
+- Now edit the Activity Dashboard interface 
+
+```jsx 
+// ActivityDashboard
+interface Props {
+    activities: Activity[];
+    selectedActivity: Activity | undefined;
+    selectActivity: (id: string) => void; 
+    cancelSelectActivity: () => void;
+    editMode: boolean; 
+    openForm: (id: string) => void; 
+    closeForm: () => void; 
+    createOrEdit: (activity: Activity) => void // new code
+
+}
+
+
+export default function ActivityDashboard({activities, selectedActivity 
+                selectActivity, cancelSelectActivity, editMOde, openForm, closeForm, createOrEdit}: Props){ // new code
+    return (
+        ... // eliding code
+                <ActivityFrom closeForm={closeForm} actvity={SelectedActivity} createOrEdit={createOrEdit}/>}  // new code
+            </Grid.Column>
+        </Grid>
+    )
+}
+```
+
+- Now let's go edit the Activity Form to have this function 
+
+```jsx 
+interface Props {
+    activity: Activity | undefined 
+    closeForm: () => void; 
+    createOrEdit: (activity: Activity) => void 
+}
+
+
+... // eliding code 
+
+export default function ActivityForm({activity, selectedActivity, closeform, createOrEdit}: Props ){
+
+    ... //eliding code 
+
+    function hadnledSubmit(){
+        createOrEdit(activity)
+    }
+```
+
+- Now test out the code. 
+
+### Futrue Problems 
+
+- When we edit an Activity, it goes to the bottom of the page. 
+- The name is horrible and we aren't actually connected to our backend to make changes yet. 
 
 </div>
 </div><br/>
