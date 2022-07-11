@@ -187,6 +187,7 @@ export default function NavVar() {
         </Menu>
 ```
 {% endraw %}
+
 We also want to apply a nice gray background and get the fade with our css. To do this we will clear out the styles.css file in the layout folder and delete everything. Then we will add styling for the body of our app. 
 
 ```css
@@ -1081,6 +1082,7 @@ export default function ActivityForm({activity, closeForm}: Props) {
 ```
 - Now we need to add another interface to our 'NavBar' component and the appropriate parameters
 
+{% raw %}
 ```jsx 
 // From NavBar.tsx 
 interface Props {
@@ -1104,6 +1106,7 @@ export default function NavBar({openForm}: Props) {
     )
 }
 ```
+{% endraw %}
 
 - If we try to run the app right now, It won't exactly work because we still have some stuff to do. 
 - Let's go to the ActivityForm because we haven't added all the props. 
@@ -1396,7 +1399,7 @@ export default function ActivityForm({activity, selectedActivity, closeform, cre
 
 - Now test out the code. 
 
-### Futrue Problems 
+### Future Problems 
 
 - When we edit an Activity, it goes to the bottom of the page. 
 - The name is horrible and we aren't actually connected to our backend to make changes yet. 
@@ -1412,16 +1415,39 @@ export default function ActivityForm({activity, selectedActivity, closeform, cre
 	<h2 class="section__title" id="using-a-guid-from-the-activity-id"><strong>Using a GUID From the Activity Id</strong></h2>
 <div class="tblurb"  markdown=1>
 
-<h3>Problems </h3>
-<ul>
-<li>Create a details card next to our dashboard</li>
-</ul>
+### Problems 
 
-<h3>Instructions</h3>
-<ul>
-<li>Create a new folder in the activities folder call details. This is where we will put a new component called ActivityDetails.tsx</li>
-<li>Create a new template for it</li>
-</ul>
+- Delete unused imports. There are quite a lot of files that we have changed and added parts in new places, so not the imports aren't used. 
+- Install uuid which will give us unique ids on the client side. 
+- uuid doesn't come out of the box with typescript, so we need to install the typescript types with uuid. 
+- Add the uuid to the components. 
+
+### Instruction
+
+- In App.txs, delete the unused Header and List imports 
+- In ActivityDashboard.tsx, delete the unused List import 
+- In ActivityDetails.tsx, delete the unused Icon import 
+- Using <code class="code-style2">npm install uuid</code> install uuid. 
+- For App.tsx, add the uuid import 
+
+```jsx 
+import {v4 as uuid} from uuid; 
+```
+
+- We are going to get an error because we need to install the typescript types for uuid. To install run the command that it tells you to run when you hover over the problem, which is <code class="code-style2">npm i --save-dev @types/uuid</code>
+-Now, to the handleCreateOrEditActivity in the App.tsx file, add the following code 
+
+```jsx
+function handleCreateOrEditActivity(activity: Activity){
+    activity.id 
+        ? setActivities([...activities.filter(x => x.id !== activity.id), activity])
+        : setActivities([...activities, {...activity, id: uuid()}]);
+    setEditMode(false);
+    setSelectedActivity(activity);
+}
+```
+
+
 
 </div>
 </div><br/>
@@ -1432,16 +1458,92 @@ export default function ActivityForm({activity, selectedActivity, closeform, cre
 	<h2 class="section__title" id="deleting-an-activity"><strong>Deleting an Activity</strong></h2>
 <div class="tblurb"  markdown=1>
 
-<h3>Problems </h3>
-<ul>
-<li>Create a details card next to our dashboard</li>
-</ul>
+### Problems 
 
-<h3>Instructions</h3>
-<ul>
-<li>Create a new folder in the activities folder call details. This is where we will put a new component called ActivityDetails.tsx</li>
-<li>Create a new template for it</li>
-</ul>
+- Create the delete functionality on the client side for getting rid of views
+
+### Instructions 
+
+- In the App.tsx file create a new function called handleDeleteActivity below the other handlers in App.tsx
+
+```jsx
+// App.tsx
+function handleDeleteActivity(id: string){
+    setActivities([...activities.filter(x => x.id !== id)])
+}
+```
+
+- The function uses the spread operator and is just filtering out the id that we are deleting. We are going to want to pass the function all the way down to the ActivityList.tsx file. Thus, we need to do everything we have been doing before. 
+
+- Add the function as a Prop on the ActivityDashboard componenet 
+
+```jsx
+// From App.tsx 
+<ActivityDashboard
+    activities={activities}
+    selectedActivity={selectedActivity}
+    selectActivity={handleSelectActivity}
+    cancelSelectActivity={handleCancelSelectActivity}
+    editMode={editMode} 
+    openForm={handFormOpen} 
+    closeForm={handleFormClose}
+    createOrEdit={handleCreateOrEditActivity}
+    deleteActivity={handleDeleteActivity} // new code
+    /> 
+
+```
+
+- Now go to the dashboard component and add it as a prop. This will require you to change the interface, the parameters and then passing into the ActivityList component. 
+
+```jsx 
+// ActivityDashboard
+interface Props {
+    activities: Activity[];
+    selectedActivity: Activity | undefined;
+    selectActivity: (id: string) => void; 
+    cancelSelectActivity: () => void;
+    editMode: boolean; 
+    openForm: (id: string) => void; 
+    closeForm: () => void; 
+    createOrEdit: (activity: Activity) => void 
+    deleteActivity: (id: string) => void;
+}
+
+
+export default function ActivityDashboard({activities, selectedActivity, deleteActivity // new code
+                selectActivity, cancelSelectActivity, editMOde, openForm, closeForm, createOrEdit}: Props){ 
+    return (
+            <Grid.Column width='10'>
+                <ActivityList 
+                    activities={activities} 
+                    selectActivity={selectActivity}
+                    deleteActivity={deleteActivity} // new code
+                    />
+            </Grid.Column>
+            ... // eliding code
+     
+}
+```
+
+- Now go to our ActivityList and add the new deleteActivity 
+
+```jsx
+// ActivityList
+interface Props {
+    activities: Activity[]; 
+    selectActivity: (id: string ) => void;
+    deleteActivity: (id: string) => void; // new code
+}
+
+export default function ActivityList({activities, selectActivity, deleteActivity}): Props){ // new code
+```
+
+- Now go and add a new button. We can just copy the button down, and then edit a few of the properties 
+
+```jsx 
+  <Button onClick={() => selectActivity(activity.id)} floated='right' content='View' color='blue'> 
+  <Button onClick={() => deleteActivity(activity.id)} floated='right' content='Delete' color='red'> // added new code here
+```
 
 </div>
 </div><br/>
