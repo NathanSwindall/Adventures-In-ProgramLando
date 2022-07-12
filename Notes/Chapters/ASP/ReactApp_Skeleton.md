@@ -1,13 +1,24 @@
 ---
 layout: post
 category: notes
-image: /Notes/assets/images/react.jpg
+image: /Notes/assets/images/React.jpg
 summary: A REACT Skeleton app
 date: 2022-04-28
 author: Nathan Swindall
 ---
 
+<link rel="stylesheet" href="/blog-tech/assets/markdown.css">
+
 ## <strong>Creating an Front-end Skeleton with React<strong>
+
+
+## Table of Contents 
+
+- [Semantic UI React](#semantic-ui-react)
+- [Summary](#summary)
+
+
+
 
 For the frontend we are going to create a React.js frontend app for the api we created. We are going to use reacts `Create-react-app` for creating our app. There will be sections on theory and react components. We are going to go over react dev goals to help with debugging and then use typescript to further eliminate bugs that we might come across. Finally, we will use Axios to make http requests and semantic-ui to style our app. 
 
@@ -381,7 +392,12 @@ app.UseRouting();
 app.UseCors("CorsPolicy")
 ```
 
-## Semantic UI React 
+
+<div class="gradient">
+	<h2 class="section__title" id="semantic-ui-react"><strong>Semantic UI React </strong></h2>
+<div class="tblurb"  markdown=1>
+
+### Smeanit UI React 
 
 We are going to use semantic UI for this website. Semantic-ui is a development framework that helps create beautiful, responsive layouts, using human-friendly HTML. If you want to check out the website for this framework for react it is located [here](https://react.semantic-ui.com/usage/). In order to install this framework you will use the command 
 
@@ -409,9 +425,9 @@ Switching React to version 17 after installing with 18 (all this work should be 
 
 -update packages.json to have
 
-```json
-     "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+```jsx
+  "react": "^17.0.2",
+  "react-dom": "^17.0.2",
 ```
 - then inside the client-app run
 
@@ -448,10 +464,10 @@ ReactDOM.render(
 Update your index.html.
 
 ```html
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" />
 ```
 
-Your imports from semantic UI should now work in the app.tsx. Now we can go ahead an at the last part of our code for this section. Just add this part below the header part. We are using the semantic-ui lists. 
+Your imports from semantic UI should now work in the App.tsx. Now we can go ahead and add the last part of our code for this section. Just add this part below the header part. We are using the semantic-ui lists. 
 
 ```jsx 
 <List>
@@ -463,10 +479,25 @@ Your imports from semantic UI should now work in the app.tsx. Now we can go ahea
 </List>
 ```
 
-# Summary
+</div>
+</div><br/>
 
-There wer a lot of different concepts we covered in this section. We used create-react-app using the typscript template to create our react skeleton app. We then made sure to cover some of the most import react concepts such as hooks and the project files that come with the out-of-the-box react app. We found out how to implement some cool typescript features which will make developing our react app way easier and finding bugs will now be caught at compile time and not run time (well for a lot more bugs then without typescript). We saw how to use axios to make a simple http GET request to our API that we made. Then we finally got to see a html/css framework which will make styling our app and our html syntax a lot more consise and less over all work. 
+
+
+
+
+<div class="gradient">
+	<h2 class="section__title" id="summary"><strong>Summary</strong></h2>
+<div class="tblurb"  markdown=1>
+
+There wer a lot of different concepts we covered in this section. We used create-react-app using the typscript template to create our react skeleton app. We then made sure to cover some of the most import react concepts such as hooks and the project files that come with the out-of-the-box react app. We found out how to implement some cool typescript features which will make developing our react app way easier and finding bugs will now be caught at compile time and not run time (well for a lot more bugs then without typescript). We saw how to use axios to make a simple http GET request to our API that we made. Then we finally got to see a html/css framework which will make styling our app and our html syntax a lot more consise and less over all work. The completed skeleton can be found (here)[https://github.com/NathanSwindall/dotnet-tutorial/tree/React_Skeleton/client-app]
+
 
 # Database Error 
 
 I noticed that I had too many elements being returned from my API. If you have this problem like I did, you can just delete the Reactivities.db in your API file. When you restart your backend, this db will be recreated with all you data. There is one error that is kind of interesting. My data is coming back out of order. This seems like it could be async issue. 
+
+
+</div>
+</div><br/>
+

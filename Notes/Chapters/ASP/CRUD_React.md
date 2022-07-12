@@ -31,91 +31,150 @@ author: Nathan Swindall
 - [Deleting an Activity](#deleting-an-activity)
 
 
+<div class="gradient">
+	<h2 class="section__title" id="Introduction"><strong>Introduction</strong></h2>
+<div class="tblurb"  markdown=1>
+
+In this section we are going to create a more beautiful front end using many different features of Semantic UI and also separating our code into different components and folder structures. By the time you finish it, you will have a good looking front end that will show you different activities, but it will not persist data to the backend. 
+
+### Topics Covered 
+
+<strong>React Folder Structure</strong>
+- A React way to structure our code to give it organization
+
+<strong>TypeScript interfaces </strong>
+- Look at using interfaces to give us all the necessary typing for typescript
+
+<strong>Semantic UI Components </strong>
+- Add styling and laying out our page using an easy to use library
+
+<strong>Basic forms in React </strong>
+- How to use forms in react with one-way binding 
+
+</div>
+</div><br/>
 
 
-## <strong>Introduction</strong>
-Take a look at our folder structure
-    -Way to structure our code to give it organization
-Look at TypeScript interfaces 
-    -Look at using interfaces to give us all the necessary stuff for typescript
-Semantic UI Components 
-    -Add styling and laying stuff out
-Basic forms in React 
-    -How to use form in react with oneway binding 
 
-## <strong>Folder structure in React</strong>
+<div class="gradient">
+	<h2 class="section__title" id="folder-structure-in-react"><strong>Folder structure in React</strong></h2>
+<div class="tblurb"  markdown=1>
 
-How do we organize our folder structure in React 
-reactjs.org/docs/faq-structure.html
-Don't overthink 
-Avoid too much nesting 
-We are doing features option 
-create a folder structure as follows 
-in the src folder for the client-app 
-create an app folder and a feature folder 
-in the app folder create a layout folder.
-app folder for all crosscutting concerns 
-features folder for all of our features we build 
-Move the App.tsx file into the layouts folder. 
-An option will pop up. You want to chose always update imports. 
-Move index.css into the layouts folder, and change the name to styles.css 
-This will be our global style sheet for all of our styles 
-Remove App.css, App.tests.tsx and logo.svg
-fix the imports in index.tsx for the style sheet. 
-Remove the logo import from the App.txs file 
-Remove the app.css from the app.tsx file. 
-Check for errors and make sure the activities are still be displayed. 
-its called layout folder 
+How to organize our folder structure in [React](https://reactjs.org/docs/faq-structure.html)
+
+- <strong>Don't overthink it</strong>
+- <strong>Avoid too much nesting</strong>
+
+### Instructions 
+
+Create the folder structure as follows 
+
+- In the src folder for the client-app, create and app folder and a feature folder 
+    - The app folder is for all crosscutting concerns while the features folder is for all out new features we build
+- In the app folder create a layout folder. 
+- Move the App.tsx file into the layouts folder 
+- An option will pop up and you want to chose update imports 
+- Move the index.css into the layouts folder, and change the name to style.css 
+    - This will be our global style sheet for all of our styles 
+- Remove App.css, App.tests.tsx and logo.svg 
+- Fix the imports in index.tsx for the style sheet. 
+
+```jsx 
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './app/layout/styles.css';
+import App from './app/layout/App';
+import reportWebVitals from './reportWebVitals';
+
+```
+- Remove the logo import from the App.txs file 
+- Remove the App.css import from the App.tsx file. Your imports should look like this 
+
+```jsx 
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Header, List } from 'semantic-ui-react';
+```
+- Check for errors and make sure the activities are still displayed. 
+- The folder structure should look like this 
+
+<p>
+{%- assign ReactFolderStructure= "Notes/assets/images/Dotnet/ReactFolderStructure.png" | relative_url-%}
+<img src ="{{ReactFolderStructure}}">
+</p>
+
+</div>
+</div><br/>
 
 
-## <strong>Adding an Activity interface</strong>
-Go to localhost:5000/swagger/index.html to see your endpoints.
-In the app folder create a new folder called models 
-Now create a file called Activity.ts which will be an interface 
-You can copy the json from the swagger and put it into jsontots.com and get back and interface. 
+<div class="gradient">
+	<h2 class="section__title" id="adding-an-activity-interface"><strong>Adding an Activity interface</strong></h2>
+<div class="tblurb"  markdown=1>
+
+### Problem 
+
+- We want to add a new activity interface to bring type-safety to our component
+- Working on type safety with json files back from server
+
+### Instructions
+
+- Go to localhost:5000/swagger/index.html to see your endpoints.
+- In the app folder create a new folder called models 
+- Now create a file called Activity.ts which will be an interface 
+- You can copy the json from the swagger and put it into jsontots.com and get back and interface. 
 
 ```ts 
 export interface Activity {
     id: string; 
     title: string; 
     date: string; 
-    descritpion: stirng; 
+    descritpion: string; 
     category: string;
     city: string; 
     venue: string; 
 }
 ```
-
-You could call it IActivity.ts and go from the standards of c# if you want. 
-Now go back to the code in your App.tx file and update some areas in your code to get typesafety 
+- You could call it IActivity.ts and go from the standards of c# if you want, but we won't be doing that with our React models. 
+- Now go back to the code in your App.tx file and update some areas in your code to get type-safety. You will also need to import your interface into your App.tsx file in order to use it. 
 
 ```jsx
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Header, List } from 'semantic-ui-react';
+import { Activity } from "../models/Activity" // new code
+
 function App() {
-    const [activities, setActivities] = useState<Activity[]>([]); 
+  const [activities, setActivities] = useState<Activity[]>([]) // new code
 
-    useEffect(() => {
-        axios.get<Activity>('http://localhost:500/api/activities').then( response => {
-            setActivities(response.data)
-        })
-    }, [])
+  useEffect(() => {
+    axios.get<Activity>('http://localhost:5000/api/activities').then((response: any) => { // new code
+      setActivities(response.data);
+    })
+  }, [])
 
-    return (
-        <div>
-            <Header as='h2' icon='user' content='Reactivities' />
-
-            <List> 
-            {activities.map(activity -> (
-                <List.Item key={activity.id}>
-                    {activity.title}
-                </List.Item>
-            ))}
-            </List>
-        </div>
-    );
+  return (
+    <div >
+      <Header as='h2' icon='users' content='Reactivities' />
+      <List>
+        {activities.map((activity: any) => (
+            <List.Item key={activity.id}>
+                {activity.title} 
+            </List.Item>
+        ))}
+      </List>
+    </div>
+  );
 }
 ```
+- Now when adding Activity here, you will have type safety 
 
-Now when adding Activity here, you will have type safety 
+</div>
+</div><br/>
+
+
+
+
+
 
 ## <strong>Adding a Nav bar</strong>
 
@@ -1552,6 +1611,14 @@ export default function ActivityList({activities, selectActivity, deleteActivity
 
 
 
+<div class="gradient">
+	<h2 class="section__title" id="template"><strong>Template</strong></h2>
+<div class="tblurb"  markdown=1>
+
+
+
+</div>
+</div><br/>
 
 
 
