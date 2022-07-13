@@ -14,3 +14,12 @@ author: Nathan Swindall
 
 {% assign Promises = "Notes/Chapters/Job/Promises" | relative_url %}
 <a href="{{Promises}}">Promises</a>
+
+{% assign Promises = "Notes/Chapters/Job/Promises" | relative_url %}
+<a href="{{Promises}}">Vuetify tab picker</a>
+
+{% assign Promises = "Notes/Chapters/Job/Promises" | relative_url %}
+<a href="{{Promises}}">Decoupling using the Vue store</a>
+
+{% assign Promises = "Notes/Chapters/Job/Promises" | relative_url %}
+<a href="{{Promises}}">Recursive Endpoint combinator</a>
