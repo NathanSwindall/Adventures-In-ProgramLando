@@ -216,7 +216,7 @@ import agent from '../api/agent';
 
 ### Instruction
 
-- The first thing are going to do is create an interceptor for our response object. The interceptor will be a function we run before getting the response back. We will first create a sleep function and then run this sleep function before getting our response. All this will be done in our agent file
+- The first thing are going to do is create a sleep function and an interceptor for our response object. The interceptor will be a function we run before getting any response back. We will first create a sleep function and then run this sleep function before getting our response. All this will be done in our agent file
 
 ```jsx 
 // agent.ts 
@@ -224,9 +224,79 @@ import agent from '../api/agent';
 import { Activity } from '../models/activity';
 
 const sleep = (delay: number) => {
-	return new Promise
+	return new Promise((resolve) => {
+		setTimeout(resolve, delay)
+	})
+}
+
+axios.defaults.baseURL = 'http://localhost:5000/api';
+
+axios.interceptors.response.use(response => {
+	return sleep(1000).then(() => {
+		return response;
+	}).catch((error) => {
+		cnsole.log(error);
+		return Promise.reject(error)
+	})
+})
+```
+
+- We can covnert the interceptor function to an async await function too 
+
+```jsx
+axios.intercetpors.response.use(async response => {
+	try {
+		await sleep(1000);
+		return response
+	} catch (error) {
+		console.log(error);
+		return await Promise.reject(error)
+	}
+})
+```
+
+- In the folder structure, we are going to create a new loading component. so in the layout folder in your app, create a new component called LoadingComponent. The put the following code in it. 
+
+```jsx
+import React from 'react';
+
+interface Props {
+	inverted?: boolean; // because we are setting as default
+	content?: string; // because we are setting as default
+}
+
+export default function LoadingComponent({inverted = true, content = "Loading ..."}: Props ){
+	return (
+		<Dimmer active={true} inverted={inverted}>
+			<Loader content={content} />
+		</Dimmer>
 }
 ```
+
+-- Now go back to your App.tsx and add a new state variable for the loading component. 
+
+```jsx 
+// From App.tsx 
+const [editMode, setEditMode] = useState(false);
+const [Loading , setLoading] = useState(true); // new code
+
+useEffect(() => {
+	... // elided code 
+	setActivities(activities);
+	setLoading(false); // new code: When we finish loading the activities we turn of false
+})
+
+	... // eliding code 
+function handleDeleteActivity ... // elided function 
+
+if (loading) return <LoadingComponent content='Loading app'>
+
+return ( ... //elided code
+
+```
+
+- Now go and test out the loading component in your app
+
 
 </div>
 </div><br/>
