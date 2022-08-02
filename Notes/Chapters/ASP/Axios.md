@@ -307,7 +307,106 @@ return ( ... //elided code
 
 ### Problems 
 
+- Update the create and edit button to work with out api 
+- Add loading when we submit the button to the Server.
+
 ### Instruction
+
+- In the agent.ts file, add the following axios requests to your Activities object. 
+
+```jsx 
+// agent.ts 
+const Activities = {
+	list: () => requests.get<Acitvity[]>('/activities/'),
+	details: (id: string) => requests.get<Activity>(`/activities/${id}`),
+	create: (activity: Activity) => requests.post<void>('/activities', activity),
+	update: (activity: Activity) => axios.put<void>(`/activities/${activity.id}`,activity)
+	delete: (id: string) => axios.delete<void>(`/activities/${id}`)
+}
+
+```
+- The strange part about the above code is that we don't use 'requests' with the delete and update, but axios, which kind of overrides some of the code we have written. 
+
+
+- Next, in the App.tsx file, we are going to create a new state variable called submitting, and set it to false initially because we aren't submitting anything. 
+
+- Then we are going to rewrite the handleCreateOrEditActivity handler to include the two different handler conditions with our new submit state variable.
+
+- Finally, make sure to pass this submitting state variable to the ActivityDashboard
+
+```jsx 
+// From App.tsx 
+const [ loading, setLoading ] = useState(true);
+const [ submitting, setSubmitting] = useState(false);  // new state
+
+... //elided code
+
+function handleCreateOrEditActivity(activity: Activity){
+	setSubmitting(true); // new code: we are making a new submission
+	// if id, then we update this is specific activity
+	if(activity.id){
+		agent.Activities.update(activity).then(() => {
+			setActivities([...activities.filter(x => x.id !== activity.id, activity]) // new code: filters out our activities from update activities and then adds the new activity
+			setSelectedActivity(activity) // set new activity to the one just updated
+			setEditMode(false) // we are done editing
+			setSubmitting(false) // we are done submitting
+		})
+	// if no id, we have to create a new activity in the database with a new uuid
+	} else {
+		activity.id = uuid(); // create new id for the created activity
+		agent.Activities.create(activity).then(() => {
+			setActivities([...activities, activity])
+			setSelectedActivity(activity)
+			setEditMode(false);
+			setSubmitting(false)
+		})
+	}
+
+
+	... // elided code
+		<ActivityDashboard
+		... // elided code
+		deleteActivity={handleDeleteActivity}
+		submitting=(submitting)
+		>
+}
+
+```
+
+- Now let's pass the submitting down through our ActivityDashboard component to the activityForm component.
+
+- Add the submitting variable to our interface 
+
+```jsx 
+// Activity Dashboard 
+submitting: boolean;
+
+... // elided code 
+export default function ActivityDashboard(activities, selectedActivity, deleteActivity,
+		selecteActivity, cancelActivity, editMode, openForm,
+		closeForm, createOrEdit, submitting)
+
+... // elided code 
+<ActivityFrom 
+	closeForm={closeForm}
+	activity={selectedActivity}
+	createOrEdit={createOrEdit}
+	submitting={submitting}
+>
+```
+
+- Now in ActivityForm component, go ahead an add submitting to the interface, the parameter list. 
+- Then add submitting to the submit button 
+
+```jsx 
+// ActivityForm 
+
+<Button loading={submitting} floated='right' positive type='submit' content='Submit'>
+```
+
+- Now test out the code
+
+
 
 </div>
 </div><br/>
@@ -318,7 +417,127 @@ return ( ... //elided code
 
 ### Problems 
 
+- Fix the delete handler to take into account our actual backend delete endpoint 
+- Make sure to pass submitting down to ActivityList and hook it up to the button 
+- Fix the bug with all the delete buttons having a loading icon when we delete an activity
+
 ### Instruction
+
+- In our App.tsx file we are going to add the delete endpoint code to our handler. 
+
+```jsx
+// handleDeleteActivity
+function handleDeleteActivity(id: string){
+	setSubmitting(true);
+	agent.Activities.delete(id).then(() => {
+		setActivities([...activities.filter(x => x.id !== id)])
+		setSubmitting(false);
+	})
+}
+```
+
+- The spread syntax is a little confusing, as filter returns a new array. Thus, why should we wrap the array in the spread operator ([...])
+- Here is an example of a console application below. They both seem to return an array. 
+
+```js
+
+let arr = [{a: 1}, {a: 2}, {a: 3}, {a: 5}]
+arr.filter(x => x.a !== 2)
+// (3) [{…}, {…}, {…}]
+
+[...arr.filter(x => x.a !== 1)]
+// (3) [{…}, {…}, {…}]
+```
+
+- We are already passing the submitting down to the ActivityDashboard, but now go to the ActivityDashboard file and pass the submitting variable through the ActivityList. 
+
+```jsx
+// ActivityDashboard.tsx
+<ActivityList activities={activities}
+	selectActivity={selectActivity}
+	deleteActivity={deleteActivity}
+	submitting={submitting}
+	/>
+```
+
+- Now make sure to add the submitting type to the Props type in the ActivityList.tsx file
+
+```jsx
+// from activityList
+interface Props {
+	activities: Activity[];
+	selectActivity: (id: string) => void; 
+	deleteActivity: (id: string) => void;
+	submitting: bolean;
+}
+```
+
+- We have been this process a million times, but now add submitting to the parameter list in the ActivityList.tsx file 
+
+```jsx 
+// ActivityList
+export default function ActivityList({activities, selectActivity, deleteActivity, submitting}: Props) {
+```
+
+- Next let's add the submitting variable to the delete button
+
+```jsx
+// ActivityList
+<Button loading={submitting} onClick={() => deleteActivity(activity.id)} .... 
+```
+
+- Now let us go and test out the delete button. You will notice that there is a huge problem when we try it out. The loading component is used for all the delete buttons and not the button we want it for. How do we fix this? Well, there is an easy way to fix it. We just have to make the button unique. 
+- First we will add a state variable for the ActivityList.tsx file and create a new handler function for the deleting an activity
+
+```jsx 
+// ActivityList
+export default function ActivityList({activities, selectActivity, deleteActivity, submitting}: Props) {
+	const [target, setTarget] = useState(''); // set the state to empty
+
+	function handleActivityDelete(e: any, id: string){
+		setTarget(e.target.name);
+		deleteActivity(id);
+	}
+	
+```
+
+- Next, we will give our button a name, so that every button has a unique name. The best name we could give our button is the Activity.id because no activity has the same id. 
+
+```jsx 
+// ActivityList 
+<Button
+	name={activity.id} // new 
+	loading={submitting} // we added this earlier 
+	onClick={(e) => handleActivityDelete(e,activity.id)}  // changed the code to use our new handleActivityDelete handler
+	floated='right'
+	content='Delete'
+	color='red'
+	/>
+
+```
+
+- There is still one mor minor issue. Notice that in the above we put any, which is really bad coding practice. We should instead use something else that is more specific. If we hover our mouse over the 'e' in the onClick function we can see what type it is, but this isn't exactly the type that we should put in our function. The type will actually be: `SyntheticEvent<HTMLButtonElement>`. Thus, we need to change our code slightly to handle this type. 
+
+```jsx 
+// ActivityList
+export default function ActivityList({activities, selectActivity, deleteActivity, submitting}: Props) {
+	const [target, setTarget] = useState(''); // set the state to empty
+
+	function handleActivityDelete(e: SyntheticEvent<HTMLButtonElement>, id: string){
+		setTarget(e.currentTarget.name);
+		deleteActivity(id);
+	}
+	
+```
+
+- There is one last part that we want to add. We need to update the loading part of the function. We need to make sure that the loading is only true with the unique button that we have. We can do this by setting the loading property on the button. 
+
+```jsx 
+// ActivityList. tsx 
+loading={submitting && target === activity.id}
+```
+
+- This section is now done. 
 
 </div>
 </div><br/>

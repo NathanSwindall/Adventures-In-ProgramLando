@@ -16,9 +16,9 @@ author: Nathan Swindall
 - [Folder structure in React](#folder-structure-in-react)
 - [Adding an Activity Interface](#adding-an-activity-interface)
 - [Adding a Nav bar](#adding-a-nav-bar)
-- [Adding some style to the nav bar](#adding-some-style-to-the-nav-bar)
+    - [Adding some style to the nav bar](#adding-some-style-to-the-nav-bar)
     - [NavBar margin and fade](#navbar-margin-and-fade)
-    - [Add padding to body and reorganize](#add-padding-to-body-and-reorganize)
+- [Add padding to body and reorganize](#add-padding-to-body-and-reorganize)
 - [Creating an Activity dashboard](#creating-an-activity-dashboard)
 - [Creating an activity list](#creating-an-activity-list)
 - [Creating a Details View](#creating-a-details-view)
@@ -156,7 +156,7 @@ function App() {
     <div >
       <Header as='h2' icon='users' content='Reactivities' />
       <List>
-        {activities.map((activity: any) => (
+        {activities.map((activity: Activity) => ( // added some code here. 
             <List.Item key={activity.id}>
                 {activity.title} 
             </List.Item>
@@ -173,10 +173,10 @@ function App() {
 
 
 
+<div class="gradient">
+	<h2 class="section__title" id="adding-a-nav-bar"><strong>Adding a Nav bar</strong></h2>
+<div class="tblurb"  markdown=1>
 
-
-
-## <strong>Adding a Nav bar</strong>
 
 Add new file to the layout folder called NavBar.tsx
 The Container just adds padding for you
@@ -185,17 +185,17 @@ The Container just adds padding for you
 import React from 'react';
 import { Button, Container, Menu} from 'semantic-ui-react'
 
-export default function NavVar() {
+export default function NavBar() {
     return (
         <Menu inverted fixed='top'>
             <Container>
                 <Menu.Item header>
-                    <img src="/assets/logo.png" alt="logo">
+                    <img src="/assets/logo.png" alt="logo"/>
                 </Menu.Item>
                 <Menu.Item name="Activities" />
                 <Menu.Item>
                     <Button positive content="Create Activity" />
-                <Menu.Item>
+                </Menu.Item>
             </Container>
         </Menu>
     )
@@ -221,9 +221,9 @@ return (
 Now go to your running app and see if it is working. The NavBar doesn't look great right now, but it will 
 
 
-## <strong>Adding some style to the nav bar</strong>
+### <strong>Adding some style to the nav bar</strong>
 
-Right now our NavBar looks kind of bad. We are going to do a few things. First we are going to add a Margin between the log of the NavBar and Reactivities. Then, we are going ot color the NavBar to have a cool fade effect on it. Finally, we are going to move the Activities away from the edge and under out logo part. First, we need to add our images to a brand new folder called assets in your public directory in your client-app folder. Just past all the images you need here. Now the img should work with our app. 
+Right now our NavBar looks kind of bad. We are going to do a few things. First we are going to add a Margin between the log of the NavBar and Reactivities. Then, we are going to color the NavBar to have a cool fade effect on it. Finally, we are going to move the Activities away from the edge and under out logo part. First, we need to add our images to a brand new folder called assets in your public directory in your client-app folder. Just past all the images you need here. Now the img should work with our app. the images are on my github if you need them. If you don't have them, don't worry about it. 
 
 ### <strong>NavBar margin and fade</strong>
 
@@ -260,6 +260,10 @@ body {
 ```
 
 The class targeting is very confusing for this. It seems to contain the all the properties our Menu. I think it would probably be a good thing to mess around with it to get a better idea of how the linear-gradient works, and how we are targeting the specific element we are trying to style. We put the important at the end to make sure that no styles are overriding these styles. 
+
+
+</div>
+</div><br/>
 
 ### <strong>Add padding to body and reorganize</strong>
 

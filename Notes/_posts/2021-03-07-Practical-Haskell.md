@@ -46,3 +46,5 @@ Experienced programmers who may be new to the Haskell programming language. Howe
 **Chapter 6**
 {% assign Chapter2 = "Notes/Chapters/PracticalHaskell/kmeansclustering" | relative_url %} 
 <a href="{{Chapter2}}">K-Means Clustering</a>
+{% assign clientMonads = "Notes/Chapters/PracticalHaskell/clientMonads" | relative_url %} 
+<a href="{{clientMonads}}">Building a Simple Project</a>

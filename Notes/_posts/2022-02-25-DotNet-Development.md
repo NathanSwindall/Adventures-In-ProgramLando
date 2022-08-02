@@ -28,6 +28,12 @@ At my current job, I am using Vue.js with ASP.Net Core, but I haven't used ASP.N
 {% assign Slots = "Notes/Chapters/ASP/CRUD_React" | relative_url %} 
 &rarr; <strong><a href="{{Slots}}"> CRUD application using React - Main app 4</a></strong>
 
+{% assign Slots = "Notes/Chapters/ASP/Axios" | relative_url %} 
+&rarr; <strong><a href="{{Slots}}"> Using Axios to Talk to Server - Main app 5</a></strong>
+
+{% assign Slots = "Notes/Chapters/ASP/MobX" | relative_url %} 
+&rarr; <strong><a href="{{Slots}}"> Using MobX for global storage - Main app 6</a></strong>
+
 {% assign Slots = "Notes/Chapters/ASP/FSharpBankAccount" | relative_url %} 
 &rarr; <strong><a href="{{Slots}}"> FSharp Bank Account App </a></strong>
 
